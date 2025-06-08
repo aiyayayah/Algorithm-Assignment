@@ -7,21 +7,21 @@ public class binary_search {
         boolean fileIsFound = searchFileName(fileName);
 
         if (fileIsFound) {
-            System.out.println(fileName + "\" was FOUND in the dataset folder.");
+            System.out.println(fileName + " was FOUND in the dataset folder.");
         } else {
-            System.out.println(fileName + "\" was NOT FOUND in the dataset folder.");
+            System.out.println(fileName + " was NOT FOUND in the dataset folder.");
         }
     }
 
     private static String getUserInput() {
         Scanner scannerObject = new Scanner(System.in);
-        System.out.println("Enter the file name to perform search:");
+        System.out.println("Enter the file name to perform binary search:");
         String fileNameInput = scannerObject.nextLine();
         return fileNameInput;
     }
 
     private static boolean searchFileName(String targetFileName) {
-        File datasetFolder = new File("dataset");
+        File datasetFolder = new File("dataSet");
 
         if (!datasetFolder.exists() || !datasetFolder.isDirectory()) {
             System.out.println("Dataset folder not found!");
@@ -31,7 +31,6 @@ public class binary_search {
 
         String[] fileList = datasetFolder.list();
         if (fileList == null || fileList.length == 0) {
-            System.out.println("Dataset folder is empty!");
             return false;
         }
 
@@ -40,7 +39,7 @@ public class binary_search {
                 return true;
             }
         }
-
         return false;
     }
+
 }
