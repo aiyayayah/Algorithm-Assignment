@@ -23,16 +23,21 @@ public class dataSetGenerator {
         }
         scanner.close();
 
-        // Generate datasets with sequential unique integers
+        // Generate datasets with unique random integers
         for (int i = 0; i < 10; i++) {
             int n = sizes[i];
-            String filename = "dataSet/dataset_" + (i + 1) + "_" + n + ".csv";
+            String filename = "dataSet/dataset_" + n + ".csv";
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-                for (int value = 1; value <= n; value++) {
-                    String randomStr = generateRandomString(random, 5 + random.nextInt(3));
-                    writer.write(value + "," + randomStr);
-                    writer.newLine();
+                Set<Integer> uniqueIntegers = new HashSet<>();
+                while (uniqueIntegers.size() < n) {
+                    // Generate a positive 32-bit random number up to 1,000,000,000
+                    int value = 1 + random.nextInt(1_000_000_000);
+                    if (uniqueIntegers.add(value)) {
+                        String randomStr = generateRandomString(random, 5 + random.nextInt(3));
+                        writer.write(value + "," + randomStr);
+                        writer.newLine();
+                    }
                 }
                 System.out.println("Dataset written to " + filename);
             } catch (IOException e) {

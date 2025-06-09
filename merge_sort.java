@@ -25,7 +25,8 @@ public class merge_sort {
         String inputFile = scanner.nextLine().trim();
 
         List<DataRow> dataList = readCSV(inputFile);
-        if (dataList == null) return;
+        if (dataList == null)
+            return;
 
         DataRow[] dataArray = dataList.toArray(new DataRow[0]);
 
@@ -56,8 +57,10 @@ public class merge_sort {
         DataRow[] L = new DataRow[n1];
         DataRow[] R = new DataRow[n2];
 
-        for (int i = 0; i < n1; ++i) L[i] = arr[left + i];
-        for (int j = 0; j < n2; ++j) R[j] = arr[mid + 1 + j];
+        for (int i = 0; i < n1; ++i)
+            L[i] = arr[left + i];
+        for (int j = 0; j < n2; ++j)
+            R[j] = arr[mid + 1 + j];
 
         int i = 0, j = 0, k = left;
         while (i < n1 && j < n2) {
@@ -68,8 +71,10 @@ public class merge_sort {
             }
         }
 
-        while (i < n1) arr[k++] = L[i++];
-        while (j < n2) arr[k++] = R[j++];
+        while (i < n1)
+            arr[k++] = L[i++];
+        while (j < n2)
+            arr[k++] = R[j++];
     }
 
     // Read CSV
