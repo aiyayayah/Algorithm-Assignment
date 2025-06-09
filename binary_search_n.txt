@@ -1,15 +1,15 @@
 Best case (middle element):
-Target: 50279940
-Found: zjlfu
-Time (seconds): 3.2E-6
+Target: 744447475
+Found: polnh
+Time (seconds): 1.3E-6
 
 Average case (quarter element):
-Target: 25139970
-Found: icoksw
-Time (seconds): 1.1E-6
+Target: 557489363
+Found: oggmmx
+Time (seconds): 1.5E-6
 
 Worst case (target not in list):
 Target: -1
 Found: Not found
-Time (seconds): 8.6E-6
+Time (seconds): 6.0E-7
 
