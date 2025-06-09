@@ -25,7 +25,6 @@ public class binary_search {
         System.out.println(fileName + " was FOUND in the output folder.");
 
         long fileNumber = ExtractNumberFromFileName(fileName);
-        System.out.println("Extracted number from file name: " + fileNumber);
 
         // Parse the file
         List<Pair> dataList = ParseFile("output/" + fileName);
@@ -37,11 +36,24 @@ public class binary_search {
         // Sort list by number for binary search
         dataList.sort(Comparator.comparingLong(p -> p.number));
 
-        // Ask user for number to search
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter number to binary search: ");
-        long key = scanner.nextLong();
-        scanner.close();
+        // BEST CASE: Middle element
+        long bestCaseTarget = dataList.get(dataList.size() / 2).number;
+
+        // AVERAGE CASE: Random element
+        Random rand = new Random();
+        long averageCaseTarget = dataList.get(rand.nextInt(dataList.size())).number;
+
+        // WORST CASE: Target not in list
+        long worstCaseTarget = -1; // Assuming all numbers in list are positive
+
+        System.out.println("\n=== BEST CASE ===");
+        measureSearchTime(dataList, bestCaseTarget);
+
+        System.out.println("\n=== AVERAGE CASE ===");
+        measureSearchTime(dataList, averageCaseTarget);
+
+        System.out.println("\n=== WORST CASE ===");
+        measureSearchTime(dataList, worstCaseTarget);
     }
 
     private static String GetUserInput() {
@@ -72,6 +84,16 @@ public class binary_search {
         return false;
     }
 
+    private static long ExtractNumberFromFileName(String fileName) {
+        try {
+            String[] parts = fileName.split("_");
+            String lastPart = parts[parts.length - 1];
+            return Long.parseLong(lastPart.replace(".csv", ""));
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
     private static List<Pair> ParseFile(String filename) {
         List<Pair> list = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
@@ -89,18 +111,38 @@ public class binary_search {
         return list;
     }
 
-    private static long ExtractNumberFromFileName(String fileName) {
-        try {
-            // Assuming format like "merge_sort_2342.csv"
-            // Split by underscore to get the last part with number and extension
-            String[] parts = fileName.split("_");
-            String lastPart = parts[parts.length - 1]; // "2342.csv"
-            // Remove the ".csv" extension and parse number
-            return Long.parseLong(lastPart.replace(".csv", ""));
-        } catch (Exception e) {
-            System.out.println("Failed to extract number from file name.");
-            return -1; // or handle error as needed
+    // Binary Search on List<Pair>
+    private static int binarySearch(List<Pair> list, long target) {
+        int low = 0;
+        int high = list.size() - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            long midValue = list.get(mid).number;
+
+            if (midValue == target) {
+                return mid;
+            } else if (midValue < target) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
         }
+
+        return -1; // not found
     }
 
+    private static void measureSearchTime(List<Pair> list, long target) {
+        long startTime = System.nanoTime();
+        int index = binarySearch(list, target);
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+
+        if (index != -1) {
+            System.out.println(target + "," + list.get(index).text + " at index " + index);
+        } else {
+            System.out.println("Target " + target + " not found.");
+        }
+        System.out.println("Search took " + duration + " nanoseconds (" + (duration / 1_000_000.0) + " ms).");
+    }
 }
