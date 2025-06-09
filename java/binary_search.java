@@ -24,6 +24,9 @@ public class binary_search {
 
         System.out.println(fileName + " was FOUND in the output folder.");
 
+        long fileNumber = ExtractNumberFromFileName(fileName);
+        System.out.println("Extracted number from file name: " + fileNumber);
+
         // Parse the file
         List<Pair> dataList = ParseFile("output/" + fileName);
         if (dataList == null) {
@@ -38,14 +41,6 @@ public class binary_search {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter number to binary search: ");
         long key = scanner.nextLong();
-
-        int index = binarySearch(dataList, key);
-        if (index != -1) {
-            System.out
-                    .println("Found number " + key + "," + dataList.get(index).text + " at index " + index);
-        } else {
-            System.out.println("Number " + key + " not found.");
-        }
         scanner.close();
     }
 
@@ -94,19 +89,18 @@ public class binary_search {
         return list;
     }
 
-    private static int binarySearch(List<Pair> list, long key) {
-        int low = 0, high = list.size() - 1;
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
-            long midVal = list.get(mid).number;
-
-            if (midVal == key)
-                return mid;
-            else if (midVal < key)
-                low = mid + 1;
-            else
-                high = mid - 1;
+    private static long ExtractNumberFromFileName(String fileName) {
+        try {
+            // Assuming format like "merge_sort_2342.csv"
+            // Split by underscore to get the last part with number and extension
+            String[] parts = fileName.split("_");
+            String lastPart = parts[parts.length - 1]; // "2342.csv"
+            // Remove the ".csv" extension and parse number
+            return Long.parseLong(lastPart.replace(".csv", ""));
+        } catch (Exception e) {
+            System.out.println("Failed to extract number from file name.");
+            return -1; // or handle error as needed
         }
-        return -1;
     }
+
 }

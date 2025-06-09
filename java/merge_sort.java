@@ -34,9 +34,14 @@ public class merge_sort {
         mergeSort(dataArray, 0, dataArray.length - 1);
         long endTime = System.nanoTime();
 
-        String outputFile = "merge_sort_" + dataArray.length + ".csv";
+        // Create output directory if it does not exist
+        File outputDir = new File("output");
+        if (!outputDir.exists()) {
+            outputDir.mkdir();
+        }
+
+        String outputFile = "output/merge_sort_" + dataArray.length + ".csv";
         writeCSV(dataArray, outputFile);
-        System.out.printf("Sorting completed. Output written to %s\n", outputFile);
         System.out.printf("Running time: %.3f seconds\n", (endTime - startTime) / 1e9);
     }
 
