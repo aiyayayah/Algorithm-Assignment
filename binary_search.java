@@ -36,7 +36,6 @@ public class binary_search {
         // Sort list by number
         dataList.sort(Comparator.comparingLong(p -> p.number));
 
-        // Define best, average, and worst cases:
         long bestCaseTarget = dataList.get(dataList.size() / 2).number; // Middle element
         long averageCaseTarget = dataList.get(dataList.size() / 4).number; // Quarter element
         long worstCaseTarget = -1L; // A number NOT in the list (assuming all numbers positive)
