@@ -1,48 +1,37 @@
-
 import java.util.*;
 import java.io.*;
 
 public class dataSetGenerator {
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
 
-        // create output directory if it doesn't exist
+        // Create output directory if it doesn't exist
         File folder = new File("dataSet");
         if (!folder.exists()) {
             folder.mkdir();
         }
 
-        // take 10 inputs
         int[] sizes = new int[10];
         for (int i = 0; i < 10; i++) {
             System.out.print("Enter number of rows for file " + (i + 1) + ": ");
             sizes[i] = scanner.nextInt();
+            if (sizes[i] <= 0) {
+                System.out.println("Please enter a positive integer.");
+                i--;
+            }
         }
         scanner.close();
 
-        // generate 10 datasets
+        // Generate datasets with sequential unique integers
         for (int i = 0; i < 10; i++) {
             int n = sizes[i];
-            Set<Integer> uniqueIntegers = new LinkedHashSet<>();
-            while (uniqueIntegers.size() < n) {
-                int value = random.nextInt(1_000_000_000) + 1;
-                uniqueIntegers.add(value);
-            }
+            String filename = "dataSet/dataset_" + (i + 1) + "_" + n + ".csv";
 
-            List<String> dataset = new ArrayList<>(n);
-            for (int value : uniqueIntegers) {
-                String randomStr = generateRandomString(random, 5 + random.nextInt(3));
-                dataset.add(value + "," + randomStr);
-            }
-
-            Collections.shuffle(dataset);
-
-            String filename = "dataSet/dataset_" + n + ".csv";
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-                for (String line : dataset) {
-                    writer.write(line);
+                for (int value = 1; value <= n; value++) {
+                    String randomStr = generateRandomString(random, 5 + random.nextInt(3));
+                    writer.write(value + "," + randomStr);
                     writer.newLine();
                 }
                 System.out.println("Dataset written to " + filename);
@@ -52,7 +41,7 @@ public class dataSetGenerator {
         }
     }
 
-    // generat a random lowercase string
+    // Generate a random lowercase string
     private static String generateRandomString(Random random, int length) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
