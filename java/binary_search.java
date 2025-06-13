@@ -114,7 +114,6 @@ public class binary_search {
         startTime = System.nanoTime();
         left = 0;
         right = list.size() - 1;
-        System.out.println("hey: " + right);
         comparisons = 0;
         while (left <= right) {
             int middle = (left + right) / 2;
@@ -128,7 +127,7 @@ public class binary_search {
         int leftComparisons = comparisons;
 
         System.out.println("Leftmost Target:");
-        System.out.println("  Comparisons: " + leftComparisons);
+        System.out.println("  Loop: " + leftComparisons);
         System.out.println("  Time: " + leftTime + " nanoseconds");
 
         // target at RIGHTMOST of the list
@@ -148,7 +147,7 @@ public class binary_search {
         int rightComparisons = comparisons;
 
         System.out.println("Rightmost Target:");
-        System.out.println("  Comparisons: " + rightComparisons);
+        System.out.println("  Loop: " + rightComparisons);
         System.out.println("  Time: " + rightTime + " nanoseconds");
 
         System.out.println();
