@@ -78,7 +78,6 @@ public class binary_search {
         return list;
     }
 
-    // Binary Search on List<Pair>
     private static int binarySearch(List<Pair> list) {
         int left = 0;
         int right = list.size() - 1;
@@ -150,19 +149,49 @@ public class binary_search {
         System.out.println("  Loop: " + rightComparisons);
         System.out.println("  Time: " + rightTime + " nanoseconds");
 
-        System.out.println();
-        if (leftTime > rightTime) {
-            System.out.println("True worst case: Leftmost");
-        } else if (rightComparisons > leftComparisons) {
-            System.out.println("True worst case: Rightmost");
-        } else {
-            // Time comparison if comparisons are equal
-            if (leftTime > rightTime) {
-                System.out.println("True worst case: Leftmost (slower time)");
-            } else {
-                System.out.println("True worst case: Rightmost (slower time)");
-            }
+        // target at left beside the first middle
+        startTime = System.nanoTime();
+        left = 0;
+        right = list.size() - 1;
+        int firstMiddle = (left + right) / 2;
+        int targetLeftIndex = firstMiddle - 1; // One index left of the initial middle
+        comparisons = 0;
+        while (left <= right) {
+            int middle = (left + right) / 2;
+            comparisons++;
+            if (middle == targetLeftIndex)
+                break;
+            left = middle + 1;
         }
+        endTime = System.nanoTime();
+        double leftBesideMiddleTime = endTime - startTime;
+        int leftBesideMiddleComparisons = comparisons;
+
+        System.out.println("Left Beside Middle:");
+        System.out.println("  Loop: " + leftBesideMiddleComparisons);
+        System.out.println("  Time: " + leftBesideMiddleTime + " nanoseconds");
+
+        // target at right beside the first middle
+        startTime = System.nanoTime();
+        left = 0;
+        right = list.size() - 1;
+        int targetRightIndex = firstMiddle + 1; // One index right of the initial middle
+        comparisons = 0;
+        while (left <= right) {
+            int middle = (left + right) / 2;
+            comparisons++;
+            if (middle == targetRightIndex)
+                break;
+            right = middle - 1;
+        }
+        endTime = System.nanoTime();
+        double rightBesideMiddleTime = endTime - startTime;
+        int rightBesideMiddleComparisons = comparisons;
+
+        System.out.println("Right Beside Middle:");
+        System.out.println("  Loop: " + rightBesideMiddleComparisons);
+        System.out.println("  Time: " + rightBesideMiddleTime + " nanoseconds");
+
         System.out.println();
 
         // AVERAGE CASE - Simulate multiple searches
