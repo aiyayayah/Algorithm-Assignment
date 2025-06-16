@@ -25,7 +25,7 @@ public class binary_search {
         System.out.println(fileName + " was FOUND in the output folder.");
 
         // Parse the file
-        List<Pair> dataList = ParseFile("output/" + fileName);
+        List<Pair> dataList = ParseFile("output/merge_sort/" + fileName);
         if (dataList == null) {
             System.out.println("Failed to read or parse the file.");
             return;
@@ -40,7 +40,7 @@ public class binary_search {
     }
 
     private static boolean SearchFileName(String targetFileName) {
-        File datasetFolder = new File("output");
+        File datasetFolder = new File("output/merge_sort/");
 
         if (!datasetFolder.exists() || !datasetFolder.isDirectory()) {
             System.out.println("Output folder not found!");
@@ -79,6 +79,7 @@ public class binary_search {
     }
 
     private static int binarySearch(List<Pair> list) {
+        StringBuilder output = new StringBuilder(); // To store output text
         int left = 0;
         int right = list.size() - 1;
         int comparisons = 0;
@@ -88,7 +89,7 @@ public class binary_search {
         System.out.println(right);
 
         // BEST CASE - Middle element
-        System.out.println("BEST CASE:");
+        output.append("BEST CASE: \n");
         long startTime = System.nanoTime();
         left = 0;
         right = n - 1;
@@ -102,12 +103,11 @@ public class binary_search {
 
         long endTime = System.nanoTime();
         double bestTime = (endTime - startTime);
-        System.out.println("Comparisons: " + comparisons);
-        System.out.println("Time: " + bestTime + " nanoseconds");
-        System.out.println();
+        output.append("Comparisons: " + comparisons + "\n");
+        output.append("Time: " + bestTime + " nanoseconds \n \n");
 
         // WORST CASE
-        System.out.println("WORST CASE (Leftmost vs Rightmost):");
+        output.append("WORST CASE: \n");
 
         // target at LEFTMOST of the list
         startTime = System.nanoTime();
@@ -125,9 +125,9 @@ public class binary_search {
         double leftTime = endTime - startTime;
         int leftComparisons = comparisons;
 
-        System.out.println("Leftmost Target:");
-        System.out.println("  Loop: " + leftComparisons);
-        System.out.println("  Time: " + leftTime + " nanoseconds");
+        output.append("Leftmost Target: \n");
+        output.append("  Loop: " + leftComparisons + "\n");
+        output.append("  Time: " + leftTime + " nanoseconds \n");
 
         // target at RIGHTMOST of the list
         startTime = System.nanoTime();
@@ -145,9 +145,9 @@ public class binary_search {
         double rightTime = endTime - startTime;
         int rightComparisons = comparisons;
 
-        System.out.println("Rightmost Target:");
-        System.out.println("  Loop: " + rightComparisons);
-        System.out.println("  Time: " + rightTime + " nanoseconds");
+        output.append("Rightmost Target: \n");
+        output.append("  Loop: " + rightComparisons + "\n");
+        output.append("  Time: " + rightTime + " nanoseconds \n");
 
         // target at left beside the first middle
         startTime = System.nanoTime();
@@ -167,9 +167,9 @@ public class binary_search {
         double leftBesideMiddleTime = endTime - startTime;
         int leftBesideMiddleComparisons = comparisons;
 
-        System.out.println("Left Beside Middle:");
-        System.out.println("  Loop: " + leftBesideMiddleComparisons);
-        System.out.println("  Time: " + leftBesideMiddleTime + " nanoseconds");
+        output.append("Left Beside Middle: \n");
+        output.append("  Loop: " + leftBesideMiddleComparisons + "\n");
+        output.append("  Time: " + leftBesideMiddleTime + " nanoseconds \n");
 
         // target at right beside the first middle
         startTime = System.nanoTime();
@@ -188,51 +188,59 @@ public class binary_search {
         double rightBesideMiddleTime = endTime - startTime;
         int rightBesideMiddleComparisons = comparisons;
 
-        System.out.println("Right Beside Middle:");
-        System.out.println("  Loop: " + rightBesideMiddleComparisons);
-        System.out.println("  Time: " + rightBesideMiddleTime + " nanoseconds");
+        output.append("Right Beside Middle: \n");
+        output.append("  Loop: " + rightBesideMiddleComparisons + "\n");
+        output.append("  Time: " + rightBesideMiddleTime + " nanoseconds \n \n");
 
-        System.out.println();
-
-        // AVERAGE CASE - Simulate multiple searches
-        System.out.println("AVERAGE CASE:");
+        // AVERAGE CASE
+        output.append("AVERAGE CASE: \n");
         long totalTime = 0;
         int totalComparisons = 0;
-        int testRuns = n; // Test n different scenarios
-
-        for (int test = 0; test < testRuns; test++) {
-            startTime = System.nanoTime();
+        for (int i = 0; i < n; i++) {
+            long target = list.get(i).number;
             left = 0;
             right = n - 1;
             comparisons = 0;
 
-            // Simulate different search depths
-            int targetDepth = (test % (int) Math.ceil(Math.log(n) / Math.log(2))) + 1;
+            startTime = System.nanoTime();
 
-            while (left <= right && comparisons < targetDepth) {
-                int middle = (right + left) / 2;
+            while (left <= right) {
+                int middle = (left + right) / 2;
                 comparisons++;
 
-                // Simulate different search patterns
-                if (test % 2 == 0) {
+                if (list.get(middle).number == target) {
+                    break;
+                } else if (list.get(middle).number < target) {
                     left = middle + 1;
                 } else {
                     right = middle - 1;
                 }
             }
-
             endTime = System.nanoTime();
             totalTime += (endTime - startTime);
             totalComparisons += comparisons;
         }
+        double averageTime = totalTime / (double) n;
+        double averageComparisons = totalComparisons / (double) n;
 
-        double averageTime = (totalTime / (double) testRuns);
-        double averageComparisons = totalComparisons / (double) testRuns;
+        output.append("Average comparisons: " + averageComparisons + "\n");
+        output.append("Average time: " + averageTime + " nanoseconds\n");
+        writeToFile("output/binary_search/binary_search_" + n + ".txt", output.toString());
 
-        System.out.println("Average comparisons: " + String.format("%.2f", averageComparisons));
-        System.out.println("Average time: " + String.format("%.9f", averageTime) + " nanoseconds");
-        System.out.println();
+        return totalComparisons;
+    }
 
-        return comparisons;
+    private static void writeToFile(String path, String content) {
+        try {
+            File file = new File(path);
+            file.getParentFile().mkdirs();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                writer.write(content);
+            }
+            System.out.println("Output written to: " + path);
+        } catch (IOException e) {
+            System.out.println("Failed to write output file.");
+            e.printStackTrace();
+        }
     }
 }

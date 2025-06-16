@@ -40,7 +40,7 @@ public class merge_sort {
             outputDir.mkdir();
         }
 
-        String outputFile = "output/merge_sort_" + dataArray.length + ".csv";
+        String outputFile = "output/merge_sort/merge_sort_" + dataArray.length + ".csv";
         writeCSV(dataArray, outputFile);
         System.out.printf("Running time: %.3f seconds\n", (endTime - startTime) / 1e9);
     }
