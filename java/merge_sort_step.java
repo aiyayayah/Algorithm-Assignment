@@ -1,102 +1,117 @@
 import java.io.*;
 import java.util.*;
 
-public class merge_sort_step1 {
-     static class Data {
-          int integer;
-          String alphabet;
+public class merge_sort_step {
 
-          Data(int integer, String alphabet){
-            this.integer = integer;
-            this.alphabet = alphabet;
-          }
-          
-          @Override
-          public String toString() {
-               return integer + "/" + alphabet;
-          }
-     }
+    static class DataRow {
+        int number;
+        String text;
 
-     static BufferedWriter writer;
+        DataRow(int number, String text) {
+            this.number = number;
+            this.text = text;
+        }
+        @Override
+        public String toString() {
+            return number + "/" + text;
+        }
+    }
 
-     public static void main(String[] args) {
-          Scanner scanner = new Scanner(System.in);
-          System.out.print("Enter dataset file (Start with 'dataset/'): ");
-          String filename = scanner.nextLine().trim();
-          System.out.print("Start row: ");
-          int start = scanner.nextInt();
-          System.out.print("End row: ");
-          int end = scanner.nextInt();
+    static BufferedWriter stepWriter;
 
-          List<Data> rows = read(filename);
-          if(rows == null || start < 1 || end > rows.size()) return;
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-          List<Data> steps = rows.subList(start - 1, end);
-          Data[] array = steps.toArray(new Data[0]);
+        // Prompt user input
+        System.out.print("Enter dataset filename: ");
+        String inputFile = scanner.nextLine().trim();
 
-          try {
-               writer = new BufferedWriter(new FileWriter("merge_sort_step" + "_" + start + "_" + end + ".csv"));
-               step(array);
-               sort(array, 0, array.length-1);
-               writer.close();
-               System.out.println("Steps saved.");
-          } catch (IOException e) {
-               System.out.println("Error writting file.");
-          }
-     }
+        System.out.print("Enter start row (e.g., 1): ");
+        int startRow = scanner.nextInt();
 
-     static List<Data> read(String filename) {
-          List<Data> list = new ArrayList<>();
-          try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-               String line;
-               while ((line = reader.readLine()) != null) {
-                    String[] parts = line.split(",", 2);
-                    list.add(new Data(Integer.parseInt(parts[0].trim()), parts[1].trim()));
-               }
-          } catch (IOException e) {
-               System.out.println("Failed to read file.");
-               return null;
-          }
-          return list;
-     }
+        System.out.print("Enter end row (e.g., 7): ");
+        int endRow = scanner.nextInt();
 
-     static void sort(Data[] array, int left, int right) throws IOException{
-          if (left >= right) return;
-          int mid = (left + right) / 2;
-          sort(array, left, mid);
-          sort(array, mid + 1, right);
-          merge(array, left, mid, right);
-          step(array);
-     }
+        List<DataRow> fullList = readCSV(inputFile);
+        if (fullList == null || startRow < 1 || endRow > fullList.size() || startRow > endRow) {
+            System.out.println("Invalid file or row range.");
+            return;
+        }
 
-     static void merge(Data[] array, int left, int mid, int right) {
-          List<Data> temp = new ArrayList<>();
-          int i = left, j = mid + 1;
-          
-          while (i <= mid && j <= right) {
-               temp.add(array[i].integer <= array[j].integer ? array[i++] : array [j++]);
-          }
-          while (i <= mid) {
-               temp.add(array[i++]);
-          }
-          while (j <= right) {
-               temp.add(array[j++]);
-          }
-          for (int k = 0; k < temp.size(); k++) {
-               array[left + k] = temp.get(k);
-          }
-     }
+        List<DataRow> sublist = fullList.subList(startRow - 1, endRow); // 0-indexed
+        DataRow[] array = sublist.toArray(new DataRow[0]);
 
-     static void step(Data[] array) throws IOException{
-          StringBuilder out = new StringBuilder("[");
-          for (int i = 0; i < array.length; i++) {
-               out.append(array[i]);
-               if (i < array.length - 1)
-                    out.append(", ");
-          }
-          out.append("]");
-          writer.write(out.toString());
-          writer.newLine();
-     }
+        String outputFile = "merge_sort_step_" + startRow + "_" + endRow + ".txt";
+        try {
+            stepWriter = new BufferedWriter(new FileWriter(outputFile));
+            writeStep(array); // Initial state
+            mergeSort(array, 0, array.length - 1);
+            stepWriter.close();
+            System.out.println("Step output written to " + outputFile);
+        } catch (IOException e) {
+            System.out.println("Error writing steps.");
+        }
+    }
 
+    static void mergeSort(DataRow[] arr, int left, int right) throws IOException {
+        if (left < right) {
+            int mid = (left + right) / 2;
+            mergeSort(arr, left, mid);
+            mergeSort(arr, mid + 1, right);
+            merge(arr, left, mid, right);
+            writeStep(arr);
+        }
+    }
+
+    static void merge(DataRow[] arr, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        DataRow[] L = new DataRow[n1];
+        DataRow[] R = new DataRow[n2];
+
+        for (int i = 0; i < n1; ++i) L[i] = arr[left + i];
+        for (int j = 0; j < n2; ++j) R[j] = arr[mid + 1 + j];
+
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            if (L[i].number <= R[j].number) {
+                arr[k++] = L[i++];
+            } else {
+                arr[k++] = R[j++];
+            }
+        }
+
+        while (i < n1) arr[k++] = L[i++];
+        while (j < n2) arr[k++] = R[j++];
+    }
+
+    static void writeStep(DataRow[] arr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < arr.length; i++) {
+            sb.append(arr[i]);
+            if (i < arr.length - 1) sb.append(", ");
+        }
+        sb.append("]");
+        stepWriter.write(sb.toString());
+        stepWriter.newLine();
+    }
+
+    static List<DataRow> readCSV(String filename) {
+        List<DataRow> list = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 2);
+                int number = Integer.parseInt(parts[0].trim());
+                String text = parts[1].trim();
+                list.add(new DataRow(number, text));
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + filename);
+            return null;
+        }
+        return list;
+    }
 }
