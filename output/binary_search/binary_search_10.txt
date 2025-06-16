@@ -1,0 +1,31 @@
+BEST CASE: 
+Comparisons: 1
+Time: 400.0 nanoseconds 
+ 
+WORST CASE: 
+Leftmost Target: 
+  Loop: 3
+  Time: 800.0 nanoseconds 
+Rightmost Target: 
+  Loop: 4
+  Time: 600.0 nanoseconds 
+Left Beside Middle: 
+  Loop: 4
+  Time: 500.0 nanoseconds 
+Right Beside Middle: 
+  Loop: 3
+  Time: 400.0 nanoseconds 
+ 
+AVERAGE CASE: 
+Index 0 (target 18723208): Comparisons = 3, Time = 800 ns
+Index 1 (target 39917649): Comparisons = 2, Time = 600 ns
+Index 2 (target 535307394): Comparisons = 3, Time = 600 ns
+Index 3 (target 651887592): Comparisons = 4, Time = 600 ns
+Index 4 (target 681201187): Comparisons = 1, Time = 100 ns
+Index 5 (target 697788541): Comparisons = 3, Time = 400 ns
+Index 6 (target 706657684): Comparisons = 4, Time = 500 ns
+Index 7 (target 826261787): Comparisons = 2, Time = 300 ns
+Index 8 (target 835013022): Comparisons = 3, Time = 300 ns
+Index 9 (target 882735089): Comparisons = 4, Time = 500 ns
+Average comparisons: 2.9
+Average time: 470.0 nanoseconds

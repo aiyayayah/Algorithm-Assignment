@@ -79,7 +79,7 @@ public class binary_search {
     }
 
     private static int binarySearch(List<Pair> list) {
-        StringBuilder output = new StringBuilder(); // To store output text
+        StringBuilder output = new StringBuilder();
         int left = 0;
         int right = list.size() - 1;
         int comparisons = 0;
@@ -217,8 +217,13 @@ public class binary_search {
                 }
             }
             endTime = System.nanoTime();
-            totalTime += (endTime - startTime);
+            long duration = endTime - startTime;
+            totalTime += duration;
             totalComparisons += comparisons;
+            // Print and write individual search stats
+            output.append("Index " + i + " (target " + target + "): ");
+            output.append("Comparisons = " + comparisons + ", ");
+            output.append("Time = " + duration + " ns\n");
         }
         double averageTime = totalTime / (double) n;
         double averageComparisons = totalComparisons / (double) n;
