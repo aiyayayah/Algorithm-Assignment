@@ -2,113 +2,91 @@ import java.io.*;
 import java.util.*;
 
 public class merge_sort {
+    static class Data {
+        int integer;
+        String alphabet;
 
-    static class DataRow {
-        int number;
-        String text;
-
-        DataRow(int number, String text) {
-            this.number = number;
-            this.text = text;
+        Data(int integer, String alphabet){
+            this.integer = integer;
+            this.alphabet = alphabet;
         }
-
+        @Override
         public String toString() {
-            return number + "," + text;
+            return integer + "," + alphabet;
         }
-    }
-
+    }   
+    
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner input = new Scanner(System.in);
+        System.out.println("Enter dataset filename (Start with 'dataset/'): ");
+        String filename = input.nextLine().trim();
 
-        // Ask the user to input the file name
-        System.out.print("Enter the dataset filename: ");
-        String inputFile = scanner.nextLine().trim();
-
-        List<DataRow> dataList = readCSV(inputFile);
-        if (dataList == null)
+        List<Data> datas = loadDatas(filename);
+        if(datas == null)
             return;
-
-        DataRow[] dataArray = dataList.toArray(new DataRow[0]);
+        
+        Data[] array = datas.toArray(new Data[0]);
 
         long startTime = System.nanoTime();
-        mergeSort(dataArray, 0, dataArray.length - 1);
+        sort(array, 0, array.length-1);
         long endTime = System.nanoTime();
 
-        // Create output directory if it does not exist
-        File outputDir = new File("output");
-        if (!outputDir.exists()) {
-            outputDir.mkdir();
-        }
+        String outputName = "merge_sort_" + array.length + ".csv";
+        saveToFile(array, outputName);
 
-        String outputFile = "output/merge_sort/merge_sort_" + dataArray.length + ".csv";
-        writeCSV(dataArray, outputFile);
-        System.out.printf("Running time: %.3f seconds\n", (endTime - startTime) / 1e9);
+        System.out.printf("Sorted file saved to "+ outputName + "\n");
+        System.out.printf("Running time: " + (startTime - endTime) + " seconds");
     }
 
-    // Merge Sort
-    static void mergeSort(DataRow[] arr, int left, int right) {
-        if (left < right) {
-            int mid = (left + right) / 2;
-            mergeSort(arr, left, mid);
-            mergeSort(arr, mid + 1, right);
-            merge(arr, left, mid, right);
-        }
-    }
-
-    static void merge(DataRow[] arr, int left, int mid, int right) {
-        int n1 = mid - left + 1;
-        int n2 = right - mid;
-
-        DataRow[] L = new DataRow[n1];
-        DataRow[] R = new DataRow[n2];
-
-        for (int i = 0; i < n1; ++i)
-            L[i] = arr[left + i];
-        for (int j = 0; j < n2; ++j)
-            R[j] = arr[mid + 1 + j];
-
-        int i = 0, j = 0, k = left;
-        while (i < n1 && j < n2) {
-            if (L[i].number <= R[j].number) {
-                arr[k++] = L[i++];
-            } else {
-                arr[k++] = R[j++];
-            }
-        }
-
-        while (i < n1)
-            arr[k++] = L[i++];
-        while (j < n2)
-            arr[k++] = R[j++];
-    }
-
-    // Read CSV
-    static List<DataRow> readCSV(String filename) {
-        List<DataRow> list = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+    static List<Data> loadDatas(String filename){
+        List <Data> list = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",", 2);
-                int number = Integer.parseInt(parts[0].trim());
-                String text = parts[1].trim();
-                list.add(new DataRow(number, text));
+            while ((line = reader.readLine()) != null) {
+                String[] split = line.split(",", 2);
+                list.add(new Data(Integer.parseInt(split[0].trim()), split[1].trim())); 
             }
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + filename);
+        } catch (Exception e) {
+            System.out.println("Error reading file.");
             return null;
         }
         return list;
     }
 
-    // Write CSV
-    static void writeCSV(DataRow[] data, String filename) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
-            for (DataRow row : data) {
-                bw.write(row.toString());
-                bw.newLine();
+    static void saveToFile(Data[] array, String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (Data data : array) {
+                writer.write(data.toString());
+                writer.newLine();
             }
         } catch (IOException e) {
-            System.out.println("Error writing file: " + filename);
+            System.out.println("Error to write the file.");
+        } 
+    }
+
+    static void sort(Data[] array, int left, int right) {
+        if (left >= right) return;
+        int mid = (left + right) / 2;
+        sort(array, left, mid);
+        sort(array, mid+1, right);
+        merge(array, left, mid, right);
+    }
+
+    static void merge(Data[] array, int left, int mid, int right) {
+        Data[] temp = new Data[right-1 + 1];
+        int i = left, j = mid+1, k = 0;
+
+        while (i <= mid && j <= right) {
+            temp[k++] = (array[i].integer <= array[j].integer) ? array[i++] : array[j++];
+        }
+        while (i <= mid) {
+            temp[k++] = array[i++];
+        }
+        while (j <= right) 
+            temp[k++] = array[j++];
+        
+        for(int t = 0; t < temp.length; t++){
+            array[left + t] = temp[t];
         }
     }
 }
