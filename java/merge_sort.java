@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class merge_sort {
+public class merge_sort1 {
     static class Data {
         int integer;
         String alphabet;
@@ -18,7 +18,7 @@ public class merge_sort {
     
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        System.out.println("Enter dataset filename (Start with 'dataset/'): ");
+        System.out.print("Enter dataset filename (Start with 'dataset/'): ");
         String filename = input.nextLine().trim();
 
         List<Data> datas = loadDatas(filename);
@@ -35,7 +35,7 @@ public class merge_sort {
         saveToFile(array, outputName);
 
         System.out.printf("Sorted file saved to "+ outputName + "\n");
-        System.out.printf("Running time: " + (startTime - endTime) + " seconds");
+        System.out.printf("Running time: " + (endTime - startTime) / 1e9 + " seconds");
     }
 
     static List<Data> loadDatas(String filename){
@@ -67,13 +67,15 @@ public class merge_sort {
     static void sort(Data[] array, int left, int right) {
         if (left >= right) return;
         int mid = (left + right) / 2;
+        // System.out.printf("merge(l=%d, m=%d, r=%d)\n", left, mid, right);
+        // System.out.printf("Left: %d to %d, Right: %d to %d\n", left, mid, mid+1, right);
         sort(array, left, mid);
         sort(array, mid+1, right);
         merge(array, left, mid, right);
     }
 
     static void merge(Data[] array, int left, int mid, int right) {
-        Data[] temp = new Data[right-1 + 1];
+        Data[] temp = new Data[right - left + 1];
         int i = left, j = mid+1, k = 0;
 
         while (i <= mid && j <= right) {
