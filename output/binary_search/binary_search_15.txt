@@ -1,0 +1,21 @@
+BEST CASE: 
+Comparisons: 1
+Time: 900.0 nanoseconds 
+ 
+WORST CASE: 
+Leftmost Target: 
+  Loop: 4
+  Time: 1800.0 nanoseconds 
+Rightmost Target: 
+  Loop: 4
+  Time: 1400.0 nanoseconds 
+Left Beside Middle: 
+  Loop: 4
+  Time: 1300.0 nanoseconds 
+Right Beside Middle: 
+  Loop: 4
+  Time: 1200.0 nanoseconds 
+ 
+AVERAGE CASE: 
+Average comparisons: 3.2666666666666666
+Average time: 940.0 nanoseconds
