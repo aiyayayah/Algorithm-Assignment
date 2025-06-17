@@ -11,6 +11,7 @@ public class merge_sort_step {
             this.number = number;
             this.text = text;
         }
+
         @Override
         public String toString() {
             return number + "/" + text;
@@ -24,7 +25,7 @@ public class merge_sort_step {
 
         // Prompt user input
         System.out.print("Enter dataset filename: ");
-        String inputFile = scanner.nextLine().trim();
+        String inputFile = "dataset/" + scanner.nextLine().trim();
 
         System.out.print("Enter start row (e.g., 1): ");
         int startRow = scanner.nextInt();
@@ -70,8 +71,10 @@ public class merge_sort_step {
         DataRow[] L = new DataRow[n1];
         DataRow[] R = new DataRow[n2];
 
-        for (int i = 0; i < n1; ++i) L[i] = arr[left + i];
-        for (int j = 0; j < n2; ++j) R[j] = arr[mid + 1 + j];
+        for (int i = 0; i < n1; ++i)
+            L[i] = arr[left + i];
+        for (int j = 0; j < n2; ++j)
+            R[j] = arr[mid + 1 + j];
 
         int i = 0, j = 0, k = left;
         while (i < n1 && j < n2) {
@@ -82,8 +85,10 @@ public class merge_sort_step {
             }
         }
 
-        while (i < n1) arr[k++] = L[i++];
-        while (j < n2) arr[k++] = R[j++];
+        while (i < n1)
+            arr[k++] = L[i++];
+        while (j < n2)
+            arr[k++] = R[j++];
     }
 
     static void writeStep(DataRow[] arr) throws IOException {
@@ -91,7 +96,8 @@ public class merge_sort_step {
         sb.append("[");
         for (int i = 0; i < arr.length; i++) {
             sb.append(arr[i]);
-            if (i < arr.length - 1) sb.append(", ");
+            if (i < arr.length - 1)
+                sb.append(", ");
         }
         sb.append("]");
         stepWriter.write(sb.toString());
