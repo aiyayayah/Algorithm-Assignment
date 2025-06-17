@@ -14,6 +14,8 @@ public class binary_search {
     }
 
     public static void main(String[] args) {
+        System.out.println("Current working directory: " + new File("").getAbsolutePath());
+
         String fileName = GetUserInput();
         boolean fileIsFound = SearchFileName(fileName);
 
@@ -25,7 +27,7 @@ public class binary_search {
         System.out.println(fileName + " was FOUND in the output folder.");
 
         // Parse the file
-        List<Pair> dataList = ParseFile("output/merge_sort/" + fileName);
+        List<Pair> dataList = ParseFile("../output/merge_sort/" + fileName);
         if (dataList == null) {
             System.out.println("Failed to read or parse the file.");
             return;
@@ -40,7 +42,7 @@ public class binary_search {
     }
 
     private static boolean SearchFileName(String targetFileName) {
-        File datasetFolder = new File("output/merge_sort/");
+        File datasetFolder = new File("../output/merge_sort/");
 
         if (!datasetFolder.exists() || !datasetFolder.isDirectory()) {
             System.out.println("Output folder not found!");
@@ -226,11 +228,11 @@ public class binary_search {
             // output.append("Time = " + duration + " ns\n");
         }
         double averageTime = totalTime / (double) n;
-         double averageComparisons = totalComparisons / (double) n;
+        double averageComparisons = totalComparisons / (double) n;
 
         output.append("Average comparisons: " + averageComparisons + "\n");
         output.append("Average time: " + averageTime + " nanoseconds\n");
-        writeToFile("output/binary_search/binary_search_" + n + ".txt", output.toString());
+        writeToFile("../output/binary_search/binary_search_" + n + ".txt", output.toString());
 
         return totalComparisons;
     }
