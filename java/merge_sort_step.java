@@ -42,7 +42,11 @@ public class merge_sort_step {
         List<DataRow> sublist = fullList.subList(startRow - 1, endRow); // 0-indexed
         DataRow[] array = sublist.toArray(new DataRow[0]);
 
-        String outputFile = "merge_sort_step_" + startRow + "_" + endRow + ".txt";
+        String folderPath = "output/merge_sort_step";
+        new File(folderPath).mkdirs(); // Ensure directory exists
+
+        String outputFile = folderPath + "/merge_sort_step_" + startRow + "_" + endRow + ".txt";
+
         try {
             stepWriter = new BufferedWriter(new FileWriter(outputFile));
             writeStep(array); // Initial state
@@ -50,8 +54,9 @@ public class merge_sort_step {
             stepWriter.close();
             System.out.println("Step output written to " + outputFile);
         } catch (IOException e) {
-            System.out.println("Error writing steps.");
+            System.out.println("Error writing steps: " + e.getMessage());
         }
+
     }
 
     static void mergeSort(DataRow[] arr, int left, int right) throws IOException {
