@@ -19,8 +19,8 @@ public class merge_sort {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        System.out.println("Enter dataset filename");
-        String filename = "dataset/" + input.nextLine().trim();
+        System.out.println("Enter dataset filename -- start with dataset/");
+        String filename = input.nextLine().trim();
 
         List<Data> datas = loadDatas(filename);
         if (datas == null)
