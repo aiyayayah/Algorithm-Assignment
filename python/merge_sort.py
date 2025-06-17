@@ -50,7 +50,8 @@ def merge(left, right):
 
 if __name__ == "__main__":
     filename = input("Enter dataset filename: ").strip()
-    data = read_csv(filename)
+    filepath = f"dataset/{filename}"
+    data = read_csv(filepath)
 
     sort_data = merge_sort(data)
     start = time.time()

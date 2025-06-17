@@ -44,11 +44,12 @@ def merge(left, right):
     return result
 
 if __name__ == "__main__":
-    file = input("Enter filename (Start with 'dataset/): ")
+    file = input("Enter filename: ")
+    filepath = f"dataset/{file}"
     start = int(input("Start row: "))
     end = int(input("Ends row: "))
 
-    to_read = read_csv(file)
+    to_read = read_csv(filepath)
     step = to_read[start : end]
     log_step(step)
     merge_sort(step)
