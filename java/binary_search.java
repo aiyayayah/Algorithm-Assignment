@@ -221,14 +221,14 @@ public class binary_search {
             totalTime += duration;
             totalComparisons += comparisons;
             // Print and write individual search stats
-            output.append("Index " + i + " (target " + target + "): ");
-            output.append("Comparisons = " + comparisons + ", ");
+            output.append("i:" + i + " " + target + ": ");
+            output.append("Loop = " + comparisons + ", ");
             output.append("Time = " + duration + " ns\n");
         }
         double averageTime = totalTime / (double) n;
-        double averageComparisons = totalComparisons / (double) n;
+        // double averageComparisons = totalComparisons / (double) n;
 
-        output.append("Average comparisons: " + averageComparisons + "\n");
+        // output.append("Average comparisons: " + averageComparisons + "\n");
         output.append("Average time: " + averageTime + " nanoseconds\n");
         writeToFile("output/binary_search/binary_search_" + n + ".txt", output.toString());
 
