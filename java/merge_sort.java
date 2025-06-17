@@ -25,12 +25,14 @@ public class merge_sort {
         List<Data> datas = loadDatas(filename);
         if (datas == null)
             return;
-
+        System.out.println("Number of rows in the file: " + datas.size()); // 👈 Added this line
         Data[] array = datas.toArray(new Data[0]);
 
         long startTime = System.nanoTime();
         sort(array, 0, array.length - 1);
         long endTime = System.nanoTime();
+
+        new File("output/merge_sort").mkdirs();
 
         String outputName = "output/merge_sort/" + "merge_sort_" + array.length + ".csv";
         saveToFile(array, outputName);

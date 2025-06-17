@@ -23,16 +23,16 @@ public class dataSetGenerator {
         }
         scanner.close();
 
-        // Generate datasets with unique random integers
+        // Generate datasets with unique random long integers (max 10 digits)
         for (int i = 0; i < 10; i++) {
             int n = sizes[i];
             String filename = "dataSet/dataset_" + n + ".csv";
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-                Set<Integer> uniqueIntegers = new HashSet<>();
+                Set<Long> uniqueIntegers = new HashSet<>();
                 while (uniqueIntegers.size() < n) {
-                    // Generate a positive 32-bit random number up to 1,000,000,000
-                    int value = 1 + random.nextInt(1_000_000_000);
+                    // Generate a positive random number up to 9,999,999,999 (10-digit max)
+                    long value = 1 + (Math.abs(random.nextLong()) % 9_999_999_999L);
                     if (uniqueIntegers.add(value)) {
                         String randomStr = generateRandomString(random, 5 + random.nextInt(3));
                         writer.write(value + "," + randomStr);
