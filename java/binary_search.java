@@ -177,7 +177,6 @@ public class binary_search {
         output.append("Average loop: " + averageComparisons + " ");
         output.append("Average time: " + averageTime / 1_000_000.0 + " ms \n");
         writeToFile("output/binary_search/binary_search_" + n + ".txt", output.toString());
-        
 
         return totalComparisons;
     }

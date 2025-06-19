@@ -17,60 +17,43 @@ public class binary_search_step {
         String fileName = GetUserInput();
         boolean fileIsFound = SearchFileName(fileName);
 
+        File file = new File(fileName);
+        String baseName = file.getName(); // For clean printing
+
         if (!fileIsFound) {
-            System.out.println(fileName + " was NOT FOUND in the output folder.");
+            System.out.println(baseName + " was NOT FOUND at the given path.");
             return;
         }
 
-        System.out.println(fileName + " was FOUND in the output folder.");
+        System.out.println(baseName + " was FOUND.");
 
         Scanner targetObject = new Scanner(System.in);
-        System.out.println("Enter a number to search");
-
+        System.out.println("Enter a number to search:");
         String targetInput = targetObject.nextLine();
 
-        // Parse the file
-        List<Pair> dataList = ParseFile("output/" + fileName);
+        List<Pair> dataList = ParseFile(fileName);
         if (dataList == null) {
             System.out.println("Failed to read or parse the file.");
             return;
         }
 
         try {
-            long target = Long.parseLong(targetInput); // Convert string to long
+            long target = Long.parseLong(targetInput);
             binarySearch(dataList, target);
         } catch (NumberFormatException e) {
             System.out.println("Invalid number entered. Please enter a valid number.");
         }
-
     }
 
     private static String GetUserInput() {
         Scanner scannerObject = new Scanner(System.in);
-        System.out.println("Enter the file name to perform binary search step:");
+        System.out.println("Enter the full file path to perform binary search step:");
         return scannerObject.nextLine();
     }
 
-    private static boolean SearchFileName(String targetFileName) {
-        File datasetFolder = new File("output");
-
-        if (!datasetFolder.exists() || !datasetFolder.isDirectory()) {
-            System.out.println("Output folder not found!");
-            System.out.println("Please run dataSetGenerator.java to generate dataSets first.");
-            return false;
-        }
-
-        String[] fileList = datasetFolder.list();
-        if (fileList == null || fileList.length == 0) {
-            return false;
-        }
-
-        for (String file : fileList) {
-            if (file.equals(targetFileName)) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean SearchFileName(String fullPath) {
+        File file = new File(fullPath);
+        return file.exists() && file.isFile();
     }
 
     private static List<Pair> ParseFile(String filename) {
@@ -79,6 +62,11 @@ public class binary_search_step {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",", 2);
+                if (parts.length < 2) {
+                    System.out.println("Invalid line format: " + line);
+                    continue;
+                }
+
                 long number = Long.parseLong(parts[0].trim());
                 String text = parts[1].trim();
                 list.add(new Pair(number, text));
@@ -91,7 +79,6 @@ public class binary_search_step {
     }
 
     private static int binarySearch(List<Pair> list, long target) {
-
         int left = 0;
         int right = list.size() - 1;
 
@@ -99,29 +86,20 @@ public class binary_search_step {
             int middle = (left + right) / 2;
             long current = list.get(middle).number;
 
+            System.out.print(middle + ": ");
+            System.out.print(list.get(middle).number);
+            System.out.println("/" + list.get(middle).text);
+
             if (current == target) {
-                System.out.print(middle + ": ");
-                System.out.print(list.get(middle).number);
-                System.out.println("/" + list.get(middle).text);
                 return middle;
-            }
-
-            else if (current > target) {
-                System.out.print(middle + ": ");
-                System.out.print(list.get(middle).number);
-                System.out.println("/" + list.get(middle).text);
+            } else if (current > target) {
                 right = middle - 1;
-            }
-
-            else {
-                System.out.print(middle + ": ");
-                System.out.print(list.get(middle).number);
-                System.out.println("/" + list.get(middle).text);
+            } else {
                 left = middle + 1;
             }
         }
-        System.out.println("-1");
+
+        System.out.println("Target not found.");
         return -1;
     }
-
 }

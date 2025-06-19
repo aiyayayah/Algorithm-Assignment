@@ -15,27 +15,38 @@ public class dataSetGenerator {
         try {
             for (int fileNum = 1; fileNum <= 10; fileNum++) {
                 System.out.print("Enter number of rows for file " + fileNum + ": ");
-                long numRows = Long.parseLong(scanner.nextLine());
+                int numRows = Integer.parseInt(scanner.nextLine()); // Changed to int for HashSet safety
+
+                if (numRows > 1_000_000_000) {
+                    System.out.println("Too many rows. Must be <= 1,000,000,000 for uniqueness.");
+                    continue;
+                }
+
+                Set<Integer> generatedNumbers = new HashSet<>(numRows);
 
                 String fileName = "dataSet/dataset_" + numRows + ".csv";
                 BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 
-                for (long i = 0; i < numRows; i++) {
+                int written = 0;
+                while (written < numRows) {
                     int number = random.nextInt(1_000_000_000);
-                    String text = generateLowercaseString(random, 10);
-                    writer.write(number + "," + text);
-                    writer.newLine();
+                    if (generatedNumbers.add(number)) { // add returns false if already present
+                        String text = generateLowercaseString(random, 10);
+                        writer.write(number + "," + text);
+                        writer.newLine();
+                        written++;
 
-                    if (i % 10_000_000 == 0 && i != 0) {
-                        System.out.println("  -> " + i + " rows written to " + fileName);
+                        if (written % 10_000_000 == 0) {
+                            System.out.println("  -> " + written + " rows written to " + fileName);
+                        }
                     }
                 }
 
                 writer.close();
-                System.out.println("Finished writing " + numRows + " rows to " + fileName);
+                System.out.println("Finished writing " + numRows + " unique rows to " + fileName);
             }
         } catch (IOException e) {
-            System.err.println(" File writing error: " + e.getMessage());
+            System.err.println("File writing error: " + e.getMessage());
         }
     }
 

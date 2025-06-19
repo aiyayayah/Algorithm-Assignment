@@ -32,9 +32,9 @@ public class merge_sort {
         sort(array, 0, array.length - 1);
         long endTime = System.nanoTime();
 
-        new File("../output/merge_sort").mkdirs();
+        new File("output/merge_sort").mkdirs();
 
-        String outputName = "../output/merge_sort/" + "merge_sort_" + array.length + ".csv";
+        String outputName = "output/merge_sort/" + "merge_sort_" + array.length + ".csv";
         saveToFile(array, outputName);
 
         System.out.printf("Sorted file saved to " + outputName + "\n");
