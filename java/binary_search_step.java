@@ -18,7 +18,7 @@ public class binary_search_step {
         boolean fileIsFound = SearchFileName(fileName);
 
         File file = new File(fileName);
-        String baseName = file.getName(); // For clean printing
+        String baseName = file.getName();
 
         if (!fileIsFound) {
             System.out.println(baseName + " was NOT FOUND at the given path.");
@@ -86,7 +86,7 @@ public class binary_search_step {
             int middle = (left + right) / 2;
             long current = list.get(middle).number;
 
-            System.out.print(middle + ": ");
+            System.out.print(middle + 1 + ": ");
             System.out.print(list.get(middle).number);
             System.out.println("/" + list.get(middle).text);
 
@@ -99,7 +99,7 @@ public class binary_search_step {
             }
         }
 
-        System.out.println("Target not found.");
+        System.out.println("-1");
         return -1;
     }
 }
