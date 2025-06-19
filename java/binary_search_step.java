@@ -39,9 +39,28 @@ public class binary_search_step {
 
         try {
             long target = Long.parseLong(targetInput);
-            binarySearch(dataList, target);
+            List<String> output = new ArrayList<>();
+            int index = binarySearch(dataList, target, output);
+
+            String folderPath = "output/binary_search_step";
+            File outputDir = new File(folderPath);
+            if (!outputDir.exists()) {
+                outputDir.mkdirs();
+            }
+
+            String status = (index != -1) ? "found" : "not found";
+            String outputFilePath = folderPath + "/binary_search_step_" + target + ".txt (" + status + ")";
+            try (PrintWriter writer = new PrintWriter(new FileWriter(outputFilePath))) {
+                for (String step : output) {
+                    writer.println(step);
+                }
+            }
+
+            System.out.println("Search steps written to: " + outputFilePath);
         } catch (NumberFormatException e) {
             System.out.println("Invalid number entered. Please enter a valid number.");
+        } catch (IOException e) {
+            System.out.println("Error writing output file.");
         }
     }
 
@@ -78,7 +97,7 @@ public class binary_search_step {
         return list;
     }
 
-    private static int binarySearch(List<Pair> list, long target) {
+    private static int binarySearch(List<Pair> list, long target, List<String> stepsOutput) {
         int left = 0;
         int right = list.size() - 1;
 
@@ -86,9 +105,8 @@ public class binary_search_step {
             int middle = (left + right) / 2;
             long current = list.get(middle).number;
 
-            System.out.print(middle + 1 + ": ");
-            System.out.print(list.get(middle).number);
-            System.out.println("/" + list.get(middle).text);
+            String step = (middle + 1) + ": " + list.get(middle).number + "/" + list.get(middle).text;
+            stepsOutput.add(step);
 
             if (current == target) {
                 return middle;
@@ -99,7 +117,7 @@ public class binary_search_step {
             }
         }
 
-        System.out.println("-1");
+        stepsOutput.add("-1");
         return -1;
     }
 }
