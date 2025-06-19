@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class quick_sort_step_ {
+public class quick_sort_step {
 
     private static BufferedWriter stepWriter;
 
@@ -104,8 +104,14 @@ public class quick_sort_step_ {
 
             System.out.println("Starting quicksort from row " + startRow + " to " + endRow + "...");
 
-            String stepFilename = "quick_sort_step_" + startRow + "_" + endRow + ".txt";
+            String stepFilename = "output/quick_sort_step/quick_sort_step_" + startRow + "_" + endRow + ".txt";
             try {
+                // Ensure directory exists
+                File directory = new File("output/quick_sort_step");
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+
                 stepWriter = new BufferedWriter(new FileWriter(stepFilename));
                 quickSort(arr, startRow, endRow);
                 stepWriter.close();
@@ -114,6 +120,7 @@ public class quick_sort_step_ {
                 System.err.println("Error writing sorting steps to file: " + stepFilename);
                 e.printStackTrace();
             }
+
         }
     }
 
