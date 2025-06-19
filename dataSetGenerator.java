@@ -20,10 +20,6 @@ public class dataSetGenerator {
                 String fileName = "dataSet/dataset_" + numRows + ".csv";
                 BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 
-                // Optional header row
-                writer.write("Number,Text");
-                writer.newLine();
-
                 for (long i = 0; i < numRows; i++) {
                     int number = random.nextInt(1_000_000_000);
                     String text = generateLowercaseString(random, 10);

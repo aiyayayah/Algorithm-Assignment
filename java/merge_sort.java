@@ -19,7 +19,7 @@ public class merge_sort {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        System.out.println("Enter dataset filename -- start with dataset/");
+        System.out.println("Enter dataset filename -- start with dataSet/");
         String filename = input.nextLine().trim();
 
         List<Data> datas = loadDatas(filename);
@@ -50,7 +50,8 @@ public class merge_sort {
                 list.add(new Data(Integer.parseInt(split[0].trim()), split[1].trim()));
             }
         } catch (Exception e) {
-            System.out.println("Error reading file.");
+            System.out.println("Error reading file: " + e.getMessage());
+            e.printStackTrace(); // Optional: shows the exact line and stack trace
             return null;
         }
         return list;
