@@ -7,38 +7,18 @@ public class quick_sort_step {
 
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
-            File folder = new File("dataSet");
-            if (!folder.exists() || !folder.isDirectory()) {
-                System.out.println("dataSet directory does not exist.");
+            // Use JFileChooser to select a CSV file
+            javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+            fileChooser.setDialogTitle("Select a CSV dataset file to sort");
+            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV files", "csv"));
+            int userSelection = fileChooser.showOpenDialog(null);
+
+            if (userSelection != javax.swing.JFileChooser.APPROVE_OPTION) {
+                System.out.println("No file selected. Exiting.");
                 return;
             }
 
-            File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".csv"));
-            if (files == null || files.length == 0) {
-                System.out.println("No CSV files found in dataSet directory.");
-                return;
-            }
-
-            System.out.println("Select a dataset file to sort:");
-            for (int i = 0; i < files.length; i++) {
-                System.out.println((i + 1) + ": " + files[i].getName());
-            }
-
-            int choice = -1;
-            while (choice < 1 || choice > files.length) {
-                System.out.print("Enter your choice (1-" + files.length + "): ");
-                if (scanner.hasNextInt()) {
-                    choice = scanner.nextInt();
-                    if (choice < 1 || choice > files.length) {
-                        System.out.println("Invalid choice. Please try again.");
-                    }
-                } else {
-                    System.out.println("Invalid input. Please enter a number.");
-                    scanner.next();
-                }
-            }
-
-            String inputFilename = files[choice - 1].getPath();
+            String inputFilename = fileChooser.getSelectedFile().getAbsolutePath();
             List<Pair> elements = new ArrayList<>();
 
             // Read integer-string pairs from dataset file
