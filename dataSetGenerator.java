@@ -1,57 +1,53 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class dataSetGenerator {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
 
-        // Create output directory if it doesn't exist
-        File folder = new File("dataSet");
-        if (!folder.exists()) {
-            folder.mkdir();
+        File outputDir = new File("dataSet");
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
         }
 
-        int[] sizes = new int[10];
-        for (int i = 0; i < 10; i++) {
-            System.out.print("Enter number of rows for file " + (i + 1) + ": ");
-            sizes[i] = scanner.nextInt();
-            if (sizes[i] <= 0) {
-                System.out.println("Please enter a positive integer.");
-                i--;
-            }
-        }
-        scanner.close();
+        try {
+            for (int fileNum = 1; fileNum <= 10; fileNum++) {
+                System.out.print("Enter number of rows for file " + fileNum + ": ");
+                long numRows = Long.parseLong(scanner.nextLine());
 
-        // Generate datasets with unique random long integers (max 10 digits)
-        for (int i = 0; i < 10; i++) {
-            int n = sizes[i];
-            String filename = "dataSet/dataset_" + n + ".csv";
+                String fileName = "dataSet/dataset_" + numRows + ".csv";
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-                Set<Long> uniqueIntegers = new HashSet<>();
-                while (uniqueIntegers.size() < n) {
-                    // Generate a positive random number up to 9,999,999,999 (10-digit max)
-                    long value = 1 + (Math.abs(random.nextLong()) % 9_999_999_999L);
-                    if (uniqueIntegers.add(value)) {
-                        String randomStr = generateRandomString(random, 5 + random.nextInt(3));
-                        writer.write(value + "," + randomStr);
-                        writer.newLine();
+                // Optional header row
+                writer.write("Number,Text");
+                writer.newLine();
+
+                for (long i = 0; i < numRows; i++) {
+                    int number = random.nextInt(1_000_000_000);
+                    String text = generateLowercaseString(random, 10);
+                    writer.write(number + "," + text);
+                    writer.newLine();
+
+                    if (i % 10_000_000 == 0 && i != 0) {
+                        System.out.println("  -> " + i + " rows written to " + fileName);
                     }
                 }
-                System.out.println("Dataset written to " + filename);
-            } catch (IOException e) {
-                e.printStackTrace();
+
+                writer.close();
+                System.out.println("Finished writing " + numRows + " rows to " + fileName);
             }
+        } catch (IOException e) {
+            System.err.println(" File writing error: " + e.getMessage());
         }
     }
 
-    // Generate a random lowercase string
-    private static String generateRandomString(Random random, int length) {
-        StringBuilder sb = new StringBuilder();
+    public static String generateLowercaseString(Random random, int length) {
+        String chars = "abcdefghijklmnopqrstuvwxyz";
+        StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            char ch = (char) ('a' + random.nextInt(26));
-            sb.append(ch);
+            sb.append(chars.charAt(random.nextInt(chars.length())));
         }
         return sb.toString();
     }
