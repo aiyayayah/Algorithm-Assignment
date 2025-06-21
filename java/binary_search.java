@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.*;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class binary_search {
 
@@ -14,53 +16,29 @@ public class binary_search {
     }
 
     public static void main(String[] args) {
-        System.out.println("Current working directory: " + new File("").getAbsolutePath());
+        File file = null;
 
-        String fullPath = GetUserInput();
-        File file = new File(fullPath);
-        if (!file.exists()) {
-            System.out.println("File NOT FOUND: " + fullPath);
-            return;
-        }
+        // Use JFileChooser to select CSV file
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select a CSV dataset file for binary search");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV files", "csv"));
+        int result = fileChooser.showOpenDialog(null);
 
-        System.out.println("File FOUND: " + fullPath);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            file = fileChooser.getSelectedFile();
+            String fullPath = file.getAbsolutePath();
+            System.out.println("File FOUND: " + fullPath);
 
-        // Parse the file
-        List<Pair> dataList = ParseFile(fullPath);
-
-        if (dataList == null) {
-            System.out.println("Failed to read or parse the file.");
-            return;
-        }
-        binarySearch(dataList);
-    }
-
-    private static String GetUserInput() {
-        Scanner scannerObject = new Scanner(System.in);
-        System.out.println("Enter the full file path name to perform binary search:");
-        return scannerObject.nextLine();
-    }
-
-    private static boolean SearchFileName(String targetFileName) {
-        File datasetFolder = new File("../output/merge_sort/");
-
-        if (!datasetFolder.exists() || !datasetFolder.isDirectory()) {
-            System.out.println("Output folder not found!");
-            System.out.println("Please run dataSetGenerator.java to generate dataSets first.");
-            return false;
-        }
-
-        String[] fileList = datasetFolder.list();
-        if (fileList == null || fileList.length == 0) {
-            return false;
-        }
-
-        for (String file : fileList) {
-            if (file.equals(targetFileName)) {
-                return true;
+            List<Pair> dataList = ParseFile(fullPath);
+            if (dataList == null) {
+                System.out.println("Failed to read or parse the file.");
+                return;
             }
+
+            binarySearch(dataList);
+        } else {
+            System.out.println("No file selected. Exiting.");
         }
-        return false;
     }
 
     private static List<Pair> ParseFile(String filename) {
@@ -82,103 +60,138 @@ public class binary_search {
 
     private static int binarySearch(List<Pair> list) {
         StringBuilder output = new StringBuilder();
+        int n = list.size();
+        final int TIMING_ITERATIONS = 1000;
+
+        // Warmup JVM
+        System.out.println("Warming up JVM...");
+        for (int i = 0; i < 1000; i++) {
+            binarySearchSingle(list, list.get(i % n).number);
+        }
+
+        // ---------------------------- BEST CASE -----------------------------
+        long bestTarget = list.get(n / 2).number;
+
+        long startTime = System.nanoTime();
+        int bestComparisons = 0;
+        for (int i = 0; i < TIMING_ITERATIONS; i++) {
+            bestComparisons = binarySearchSingle(list, bestTarget);
+        }
+        long endTime = System.nanoTime();
+
+        double bestTime = (endTime - startTime) / 1_000_000.0 / TIMING_ITERATIONS;
+        output.append(String.format("Best Case Time   : %.6f ms\n", bestTime));
+        output.append("Best Case Comparisons: " + bestComparisons + "\n\n");
+
+        // ---------------------------- WORST CASE -----------------------------
+        List<Long> worstCaseTargets = new ArrayList<>();
+        int maxComparisons = 0;
+        long worstCaseAnalysisStart = System.nanoTime();
+
+        // Test ALL elements to find true worst case
+        for (int i = 0; i < n; i++) {
+            if (i % 1000000 == 0 && i > 0) {
+                System.out.println("Progress: " + i + "/" + n + " elements tested");
+            }
+
+            int comparisons = binarySearchSingle(list, list.get(i).number);
+            if (comparisons > maxComparisons) {
+                maxComparisons = comparisons;
+                worstCaseTargets.clear();
+                worstCaseTargets.add(list.get(i).number);
+            } else if (comparisons == maxComparisons) {
+                worstCaseTargets.add(list.get(i).number);
+            }
+        }
+
+        // Test non-existent value
+        long nonExistentTarget = list.get(n - 1).number + 1;
+        int nonExistentComparisons = binarySearchSingle(list, nonExistentTarget);
+        if (nonExistentComparisons >= maxComparisons) {
+            maxComparisons = nonExistentComparisons;
+            worstCaseTargets.add(nonExistentTarget);
+        }
+
+        long worstCaseAnalysisEnd = System.currentTimeMillis();
+        System.out.println("Worst case analysis completed in " +
+                (worstCaseAnalysisEnd - worstCaseAnalysisStart) / 1000.0 + " seconds");
+        System.out
+                .println("Found " + worstCaseTargets.size() + " elements requiring " + maxComparisons + " comparisons");
+
+        // Time the worst case searches
+        startTime = System.nanoTime();
+        for (int i = 0; i < TIMING_ITERATIONS; i++) {
+            binarySearchSingle(list, worstCaseTargets.get(i % worstCaseTargets.size()));
+        }
+        endTime = System.nanoTime();
+
+        double worstTime = (endTime - startTime) / 1_000_000.0 / TIMING_ITERATIONS;
+        output.append(String.format("Worst Case Time  : %.6f ms\n", worstTime));
+        output.append("Worst Case Comparisons: " + maxComparisons + "\n");
+        output.append("Elements requiring max comparisons: " + worstCaseTargets.size() + "\n\n");
+
+        // ---------------------------- AVERAGE CASE -----------------------------
+        System.out.println("Analyzing Average Case - Testing all " + n + " elements...");
+        long totalComparisons = 0;
+        long averageCaseStart = System.currentTimeMillis();
+
+        // Test ALL elements for true average
+        for (int i = 0; i < n; i++) {
+            if (i % 1000000 == 0 && i > 0) {
+                System.out.println("Progress: " + i + "/" + n + " elements tested");
+            }
+            totalComparisons += binarySearchSingle(list, list.get(i).number);
+        }
+
+        double trueAverageComparisons = (double) totalComparisons / n;
+        long averageCaseEnd = System.currentTimeMillis();
+        System.out.println("Average case analysis completed in " +
+                (averageCaseEnd - averageCaseStart) / 1000.0 + " seconds");
+
+        // Time a representative sample for average timing
+        Random random = new Random(42); // Fixed seed for reproducibility
+        List<Long> averageTargets = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            averageTargets.add(list.get(random.nextInt(n)).number);
+        }
+
+        startTime = System.nanoTime();
+        for (int i = 0; i < TIMING_ITERATIONS; i++) {
+            for (long target : averageTargets) {
+                binarySearchSingle(list, target);
+            }
+        }
+        endTime = System.nanoTime();
+
+        double averageTime = (endTime - startTime) / 1_000_000.0 / TIMING_ITERATIONS / averageTargets.size();
+
+        output.append(String.format("Average Case Time: %.6f ms\n", averageTime));
+        output.append(String.format("True Average Comparisons: %.6f\n", trueAverageComparisons));
+
+        System.out.println("\n" + output.toString());
+        writeToFile("java/output/binary_search/binary_search_" + n + ".txt", output.toString());
+        return (int) totalComparisons;
+    }
+
+    private static int binarySearchSingle(List<Pair> list, long target) {
         int left = 0;
         int right = list.size() - 1;
         int comparisons = 0;
-        int n = list.size();
-
-        // --------------------------------BEST CASE------------------------------
-        long startTime = System.nanoTime();
-        left = 0;
-        right = n - 1;
-        comparisons = 0;
 
         while (left <= right) {
-            int middle = (right + left) / 2;
+            int middle = left + (right - left) / 2;
             comparisons++;
-            break;
-        }
 
-        long endTime = System.nanoTime();
-        double bestTime = (endTime - startTime) / 1_000_000.0;
-        output.append(String.format("Best Case Time   : %.4f ms\n", bestTime));
-        output.append("loop: " + comparisons + "\n");
-        output.append("\n");
-
-        // ---------------------------------WORST CASE-----------------------------
-        int maxComparisons = 0;
-        double worstTime = 0;
-
-        for (int i = 0; i < n; i++) {
-            long target = list.get(i).number;
-            left = 0;
-            right = n - 1;
-            comparisons = 0;
-
-            startTime = System.nanoTime();
-            while (left <= right) {
-                int middle = (left + right) / 2;
-                comparisons++;
-
-                if (list.get(middle).number == target) {
-                    break;
-                } else if (list.get(middle).number < target) {
-                    left = middle + 1;
-                } else {
-                    right = middle - 1;
-                }
-            }
-            endTime = System.nanoTime();
-
-            if (comparisons > maxComparisons) {
-                maxComparisons = comparisons;
-                worstTime = (endTime - startTime) / 1_000_000.0;
+            long middleValue = list.get(middle).number;
+            if (middleValue == target) {
+                return comparisons;
+            } else if (middleValue < target) {
+                left = middle + 1;
+            } else {
+                right = middle - 1;
             }
         }
-        output.append(String.format("Worst Case Time  : %.4f ms\n", worstTime));
-        output.append("loop: " + comparisons + "\n");
-        output.append("\n");
-
-        // ---------------------------------AVERAGE CASE-----------------------------
-        long totalTime = 0;
-        int totalComparisons = 0;
-        for (int i = 0; i < n; i++) {
-            long target = list.get(i).number;
-            left = 0;
-            right = n - 1;
-            comparisons = 0;
-
-            startTime = System.nanoTime();
-
-            while (left <= right) {
-                int middle = (left + right) / 2;
-                comparisons++;
-
-                if (list.get(middle).number == target) {
-                    break;
-                } else if (list.get(middle).number < target) {
-                    left = middle + 1;
-                } else {
-                    right = middle - 1;
-                }
-            }
-
-            endTime = System.nanoTime();
-            long duration = endTime - startTime;
-            totalTime += duration;
-            totalComparisons += comparisons;
-
-        }
-
-        double averageTime = totalTime / (double) n / 1_000_000.0;
-        output.append(String.format("Average Case Time: %.4f ms\n", averageTime));
-        double averageComparisons = totalComparisons / (double) n;
-
-        output.append("Average loop: " + averageComparisons + " ");
-        output.append("Average time: " + averageTime / 1_000_000.0 + " ms \n");
-        writeToFile("output/binary_search/binary_search_" + n + ".txt", output.toString());
-
-        return totalComparisons;
+        return comparisons;
     }
 
     private static void writeToFile(String path, String content) {
