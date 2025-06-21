@@ -60,116 +60,116 @@ public class binary_search {
 
     private static int binarySearch(List<Pair> list) {
         StringBuilder output = new StringBuilder();
-        int n = list.size();
+        int inputListSize = list.size();
         final int TIMING_ITERATIONS = 1000;
 
-        // Warmup JVM
+        /// ---------------------------- WARM UP JVM -----------------------------
         System.out.println("Warming up JVM...");
         for (int i = 0; i < 1000; i++) {
-            binarySearchSingle(list, list.get(i % n).number);
+            binarySearchSingle(list, list.get(i % inputListSize).number);
         }
 
         // ---------------------------- BEST CASE -----------------------------
-        long bestTarget = list.get(n / 2).number;
+        int left = 0;
+        int right = list.size() - 1;
+        long bestCaseTarget = list.get((left + right) / 2).number;
 
-        long startTime = System.nanoTime();
-        int bestComparisons = 0;
+        long bestCaseStartTime = System.nanoTime();
+        int bestCaseComparison = 0;
         for (int i = 0; i < TIMING_ITERATIONS; i++) {
-            bestComparisons = binarySearchSingle(list, bestTarget);
+            bestCaseComparison = binarySearchSingle(list, bestCaseTarget);
         }
-        long endTime = System.nanoTime();
+        long bestCaseEndTime = System.nanoTime();
 
-        double bestTime = (endTime - startTime) / 1_000_000.0 / TIMING_ITERATIONS;
-        output.append(String.format("Best Case Time   : %.6f ms\n", bestTime));
-        output.append("Best Case Comparisons: " + bestComparisons + "\n\n");
+        double bestCaseRunTime = (bestCaseEndTime - bestCaseStartTime) / 1_000_000.0 / TIMING_ITERATIONS;
+        output.append(String.format("Best Case Time   : %.6f ms\n", bestCaseRunTime));
+        // output.append("Best Case Comparisons: " + bestCaseComparison + "\n\n");
 
         // ---------------------------- WORST CASE -----------------------------
         List<Long> worstCaseTargets = new ArrayList<>();
         int maxComparisons = 0;
-        long worstCaseAnalysisStart = System.nanoTime();
 
-        // Test ALL elements to find true worst case
-        for (int i = 0; i < n; i++) {
-            if (i % 1000000 == 0 && i > 0) {
-                System.out.println("Progress: " + i + "/" + n + " elements tested");
-            }
-
+        for (int i = 0; i < inputListSize; i++) {
             int comparisons = binarySearchSingle(list, list.get(i).number);
             if (comparisons > maxComparisons) {
                 maxComparisons = comparisons;
-                worstCaseTargets.clear();
-                worstCaseTargets.add(list.get(i).number);
+                worstCaseTargets.clear(); // clear smaller comparison
+                worstCaseTargets.add(list.get(i).number); // add the bigger comparison
             } else if (comparisons == maxComparisons) {
                 worstCaseTargets.add(list.get(i).number);
             }
         }
 
-        // Test non-existent value
-        long nonExistentTarget = list.get(n - 1).number + 1;
-        int nonExistentComparisons = binarySearchSingle(list, nonExistentTarget);
-        if (nonExistentComparisons >= maxComparisons) {
-            maxComparisons = nonExistentComparisons;
-            worstCaseTargets.add(nonExistentTarget);
+        // Value greater than all elements
+        long targetGreater = list.get(inputListSize - 1).number + 1;
+        int comparisonsGreater = binarySearchSingle(list, targetGreater);
+        if (comparisonsGreater >= maxComparisons) {
+            if (comparisonsGreater > maxComparisons) {
+                maxComparisons = comparisonsGreater;
+                worstCaseTargets.clear();
+            }
+            worstCaseTargets.add(targetGreater);
         }
 
-        long worstCaseAnalysisEnd = System.currentTimeMillis();
-        System.out.println("Worst case analysis completed in " +
-                (worstCaseAnalysisEnd - worstCaseAnalysisStart) / 1000.0 + " seconds");
-        System.out
-                .println("Found " + worstCaseTargets.size() + " elements requiring " + maxComparisons + " comparisons");
+        // Value smaller than all elements
+        long targetSmaller = list.get(0).number - 1;
+        int comparisonsSmaller = binarySearchSingle(list, targetSmaller);
+        if (comparisonsSmaller >= maxComparisons) {
+            if (comparisonsSmaller > maxComparisons) {
+                maxComparisons = comparisonsSmaller;
+                worstCaseTargets.clear();
+            }
+            worstCaseTargets.add(targetSmaller);
+        }
+        /*
+         * -----------------------TO DEBUG EACH ELEMENTS-------------------------------
+         * for (int i = 0; i < inputListSize; i++) {
+         * long target = list.get(i).number;
+         * int comparisons = binarySearchSingle(list, target);
+         * output.append(String.format("i: %d  comp: %d\n", i, comparisons));
+         * 
+         * }
+         */
 
-        // Time the worst case searches
-        startTime = System.nanoTime();
+        long worstCaseStartTime = System.nanoTime();
         for (int i = 0; i < TIMING_ITERATIONS; i++) {
             binarySearchSingle(list, worstCaseTargets.get(i % worstCaseTargets.size()));
         }
-        endTime = System.nanoTime();
+        long worstCaseEndTime = System.nanoTime();
 
-        double worstTime = (endTime - startTime) / 1_000_000.0 / TIMING_ITERATIONS;
-        output.append(String.format("Worst Case Time  : %.6f ms\n", worstTime));
-        output.append("Worst Case Comparisons: " + maxComparisons + "\n");
-        output.append("Elements requiring max comparisons: " + worstCaseTargets.size() + "\n\n");
+        double worstCaseRunTime = (worstCaseEndTime - worstCaseStartTime) / 1_000_000.0 / TIMING_ITERATIONS;
+        output.append(String.format("Worst Case Time  : %.6f ms\n", worstCaseRunTime));
+        // output.append("Worst Case Comparisons: " + maxComparisons + "\n");
+        // output.append("Elements requiring max comparisons: " +
+        // worstCaseTargets.size() + "\n\n");
 
         // ---------------------------- AVERAGE CASE -----------------------------
-        System.out.println("Analyzing Average Case - Testing all " + n + " elements...");
         long totalComparisons = 0;
-        long averageCaseStart = System.currentTimeMillis();
+        long totalSearchTime = 0;
 
-        // Test ALL elements for true average
-        for (int i = 0; i < n; i++) {
-            if (i % 1000000 == 0 && i > 0) {
-                System.out.println("Progress: " + i + "/" + n + " elements tested");
-            }
-            totalComparisons += binarySearchSingle(list, list.get(i).number);
+        for (int i = 0; i < inputListSize; i++) {
+            long target = list.get(i).number;
+
+            long startTime = System.nanoTime();
+            int comparisons = binarySearchSingle(list, target);
+            long endTime = System.nanoTime();
+
+            totalSearchTime += (endTime - startTime);
+            totalComparisons += comparisons;
         }
 
-        double trueAverageComparisons = (double) totalComparisons / n;
-        long averageCaseEnd = System.currentTimeMillis();
-        System.out.println("Average case analysis completed in " +
-                (averageCaseEnd - averageCaseStart) / 1000.0 + " seconds");
+        double totalTimeMs = totalSearchTime / 1_000_000.0;
+        double averageTimeMs = totalTimeMs / inputListSize;
+        double averageComparisons = (double) totalComparisons / inputListSize;
 
-        // Time a representative sample for average timing
-        Random random = new Random(42); // Fixed seed for reproducibility
-        List<Long> averageTargets = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            averageTargets.add(list.get(random.nextInt(n)).number);
-        }
+        // output.append(String.format("Total Average Case Time: %.6f ms\n",
+        // totalTimeMs));
+        output.append(String.format("Average Case Time: %.6f ms\n", averageTimeMs));
+        // output.append(String.format("Average Comparisons per Search: %.6f\n",
+        // averageComparisons));
 
-        startTime = System.nanoTime();
-        for (int i = 0; i < TIMING_ITERATIONS; i++) {
-            for (long target : averageTargets) {
-                binarySearchSingle(list, target);
-            }
-        }
-        endTime = System.nanoTime();
+        writeToFile("java/output/binary_search/binary_search_" + inputListSize + ".txt", output.toString());
 
-        double averageTime = (endTime - startTime) / 1_000_000.0 / TIMING_ITERATIONS / averageTargets.size();
-
-        output.append(String.format("Average Case Time: %.6f ms\n", averageTime));
-        output.append(String.format("True Average Comparisons: %.6f\n", trueAverageComparisons));
-
-        System.out.println("\n" + output.toString());
-        writeToFile("java/output/binary_search/binary_search_" + n + ".txt", output.toString());
         return (int) totalComparisons;
     }
 
@@ -179,7 +179,7 @@ public class binary_search {
         int comparisons = 0;
 
         while (left <= right) {
-            int middle = left + (right - left) / 2;
+            int middle = (left + right) / 2;
             comparisons++;
 
             long middleValue = list.get(middle).number;
