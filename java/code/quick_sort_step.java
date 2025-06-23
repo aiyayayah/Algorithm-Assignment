@@ -84,14 +84,18 @@ public class quick_sort_step {
 
             System.out.println("Starting quicksort from row " + startRow + " to " + endRow + "...");
 
-            String stepFilename = "output/quick_sort_step/quick_sort_step_" + startRow + "_" + endRow + ".txt";
-            try {
-                // Ensure directory exists
-                File directory = new File("output/quick_sort_step");
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
+            String baseDir = System.getProperty("user.dir");
+            String folderPath = baseDir + File.separator + "java" + File.separator + "output" + File.separator
+                    + "quick_sort_step";
 
+            File directory = new File(folderPath);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            String stepFilename = folderPath + File.separator + "quick_sort_step_" + startRow + "_" + endRow + ".txt";
+
+            try {
                 stepWriter = new BufferedWriter(new FileWriter(stepFilename));
                 quickSort(arr, startRow, endRow);
                 stepWriter.close();

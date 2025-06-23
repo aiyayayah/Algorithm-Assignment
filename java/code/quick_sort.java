@@ -64,20 +64,24 @@ public class quick_sort {
         long endTime = System.currentTimeMillis();
 
         // Write sorted integer-string pairs to output file
-        String outputFilename = "output/quick_sort/quick_sort_" + n + ".csv";
-        try {
-            File outputDir = new File("output/quick_sort");
-            if (!outputDir.exists()) {
-                outputDir.mkdirs();
-            }
+        // Prepare dynamic output path using project root
+        String baseDir = System.getProperty("user.dir");
+        String folderPath = baseDir + File.separator + "java" + File.separator + "output" + File.separator
+                + "quick_sort";
+        File outputDir = new File(folderPath);
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename))) {
-                for (Pair p : arr) {
-                    writer.write(p.value + "," + p.str);
-                    writer.newLine();
-                }
-                System.out.println("Sorted dataset written to " + outputFilename);
+        String outputFilename = folderPath + File.separator + "quick_sort_" + n + ".csv";
+
+        // Write sorted integer-string pairs to output file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename))) {
+            for (Pair p : arr) {
+                writer.write(p.value + "," + p.str);
+                writer.newLine();
             }
+            System.out.println("Sorted dataset written to " + outputFilename);
         } catch (IOException e) {
             System.err.println("Error writing file: " + outputFilename);
             e.printStackTrace();
