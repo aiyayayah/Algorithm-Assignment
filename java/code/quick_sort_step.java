@@ -57,11 +57,11 @@ public class quick_sort_step {
 
             int startRow = -1;
             int endRow = -1;
-            while (startRow < 0 || startRow >= n) {
-                System.out.print("Enter start row (0 to " + (n - 1) + "): ");
+            while (startRow < 1 || startRow > n) {
+                System.out.print("Enter start row (1 to " + n + "): ");
                 if (scanner.hasNextInt()) {
                     startRow = scanner.nextInt();
-                    if (startRow < 0 || startRow >= n) {
+                    if (startRow < 1 || startRow > n) {
                         System.out.println("Invalid start row. Please try again.");
                     }
                 } else {
@@ -69,11 +69,11 @@ public class quick_sort_step {
                     scanner.next();
                 }
             }
-            while (endRow < startRow || endRow >= n) {
-                System.out.print("Enter end row (" + startRow + " to " + (n - 1) + "): ");
+            while (endRow < startRow || endRow > n) {
+                System.out.print("Enter end row (" + startRow + " to " + n + "): ");
                 if (scanner.hasNextInt()) {
                     endRow = scanner.nextInt();
-                    if (endRow < startRow || endRow >= n) {
+                    if (endRow < startRow || endRow > n) {
                         System.out.println("Invalid end row. Please try again.");
                     }
                 } else {
@@ -84,6 +84,17 @@ public class quick_sort_step {
 
             System.out.println("Starting quicksort from row " + startRow + " to " + endRow + "...");
 
+            int originalStartRow = startRow;
+            int originalEndRow = endRow;
+
+            startRow = startRow - 1;
+            endRow = endRow - 1;
+
+            Pair[] fullSubarray = new Pair[endRow - startRow + 1];
+            for (int i = 0; i < fullSubarray.length; i++) {
+                fullSubarray[i] = arr[startRow + i];
+            }
+
             String baseDir = System.getProperty("user.dir");
             String folderPath = baseDir + File.separator + "java" + File.separator + "output" + File.separator
                     + "quick_sort_step";
@@ -93,11 +104,11 @@ public class quick_sort_step {
                 directory.mkdirs();
             }
 
-            String stepFilename = folderPath + File.separator + "quick_sort_step_" + startRow + "_" + endRow + ".txt";
+            String stepFilename = folderPath + File.separator + "quick_sort_step_" + originalStartRow + "_" + originalEndRow + ".txt";
 
             try {
                 stepWriter = new BufferedWriter(new FileWriter(stepFilename));
-                quickSort(arr, startRow, endRow);
+                quickSort(arr, startRow, endRow, fullSubarray, startRow, endRow);
                 stepWriter.close();
                 System.out.println("Sorting steps written to " + stepFilename);
             } catch (IOException e) {
@@ -108,17 +119,25 @@ public class quick_sort_step {
         }
     }
 
-    private static void quickSort(Pair[] arr, int low, int high) {
+    private static void quickSort(Pair[] arr, int low, int high, Pair[] fullSubarray, int fullStart, int fullEnd) {
         if (low < high) {
             int pi = partition(arr, low, high);
-            printArray(arr, low, high, pi);
 
-            quickSort(arr, low, pi - 1);
-            quickSort(arr, pi + 1, high);
+            printArray(arr, low, high, pi, fullSubarray, fullStart, fullEnd);
+
+            for (int i = low; i <= high; i++) {
+                fullSubarray[i - fullStart] = arr[i];
+            }
+
+            quickSort(arr, low, pi - 1, fullSubarray, fullStart, fullEnd);
+            quickSort(arr, pi + 1, high, fullSubarray, fullStart, fullEnd);
         }
     }
 
+
+
     private static int partition(Pair[] arr, int low, int high) {
+
         int pivot = arr[high].value;
         int i = low - 1;
         for (int j = low; j < high; j++) {
@@ -135,17 +154,29 @@ public class quick_sort_step {
         return i + 1;
     }
 
-    private static void printArray(Pair[] arr, int low, int high, int pivotIndex) {
+    private static void printArray(Pair[] arr, int low, int high, int pivotIndex, Pair[] fullSubarray, int fullStart, int fullEnd) {
         try {
-            stepWriter.write("Current array state between indexes " + low + " and " + high + ":\n");
-            for (int i = low; i <= high; i++) {
-                if (i == pivotIndex) {
-                    stepWriter.write("-> (" + arr[i].value + ", " + arr[i].str + ") [pivot]\n");
+            int relativePivot = pivotIndex - fullStart;
+            stepWriter.write("pi=" + relativePivot + " [");
+            for (int i = fullStart; i <= fullEnd; i++) {
+                Pair current;
+                if (i >= low && i <= high) {
+                    current = arr[i];
                 } else {
-                    stepWriter.write("   (" + arr[i].value + ", " + arr[i].str + ")\n");
+                    current = fullSubarray[i - fullStart];
+                }
+
+                if (i == pivotIndex) {
+                    stepWriter.write("->" + current.value + "/" + current.str);
+                } else {
+                    stepWriter.write(current.value + "/" + current.str);
+                }
+
+                if (i < fullEnd) {
+                    stepWriter.write(", ");
                 }
             }
-            stepWriter.write("\n");
+            stepWriter.write("]\n");
             stepWriter.flush();
         } catch (IOException e) {
             System.err.println("Error writing sorting steps to file.");
