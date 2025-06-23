@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.*;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class merge_sort {
     static class Data {
@@ -18,9 +20,17 @@ public class merge_sort {
     }
 
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        System.out.println("Enter dataset filename -- start with dataSet/");
-        String filename = input.nextLine().trim();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select a CSV dataset file for merge sort");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV files", "csv"));
+        int result = fileChooser.showOpenDialog(null);
+
+        if (result != JFileChooser.APPROVE_OPTION) {
+            System.out.println("No file selected. Exiting.");
+            return;
+        }
+
+        String filename = fileChooser.getSelectedFile().getAbsolutePath();
 
         List<Data> datas = loadDatas(filename);
         if (datas == null)
@@ -32,9 +42,12 @@ public class merge_sort {
         sort(array, 0, array.length - 1);
         long endTime = System.nanoTime();
 
-        new File("output/merge_sort").mkdirs();
+        String baseDir = System.getProperty("user.dir");
+        String outputDir = baseDir + File.separator + "java" + File.separator + "output" + File.separator
+                + "merge_sort";
+        new File(outputDir).mkdirs();
+        String outputName = outputDir + File.separator + "merge_sort_" + array.length + ".csv";
 
-        String outputName = "output/merge_sort/" + "merge_sort_" + array.length + ".csv";
         saveToFile(array, outputName);
 
         System.out.printf("Sorted file saved to " + outputName + "\n");

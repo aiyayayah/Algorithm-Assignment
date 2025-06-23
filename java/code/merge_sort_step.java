@@ -1,6 +1,9 @@
 import java.io.*;
 import java.util.*;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 public class merge_sort_step {
 
     static class DataRow {
@@ -24,13 +27,22 @@ public class merge_sort_step {
         Scanner scanner = new Scanner(System.in);
 
         // Prompt user input
-        System.out.print("Enter dataset filename: ");
-        String inputFile = "dataset/" + scanner.nextLine().trim();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select a CSV dataset file for merge sort step");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV files", "csv"));
+        int result = fileChooser.showOpenDialog(null);
 
-        System.out.print("Enter start row (e.g., 1): ");
+        if (result != JFileChooser.APPROVE_OPTION) {
+            System.out.println("No file selected. Exiting.");
+            return;
+        }
+
+        String inputFile = fileChooser.getSelectedFile().getAbsolutePath();
+
+        System.out.print("Enter start row: ");
         int startRow = scanner.nextInt();
 
-        System.out.print("Enter end row (e.g., 7): ");
+        System.out.print("Enter end row: ");
         int endRow = scanner.nextInt();
 
         List<DataRow> fullList = readCSV(inputFile);
@@ -42,7 +54,10 @@ public class merge_sort_step {
         List<DataRow> sublist = fullList.subList(startRow - 1, endRow); // 0-indexed
         DataRow[] array = sublist.toArray(new DataRow[0]);
 
-        String folderPath = "output/merge_sort_step";
+        String baseDir = System.getProperty("user.dir");
+        String folderPath = baseDir + File.separator + "java" + File.separator + "output" + File.separator
+                + "merge_sort_step";
+
         new File(folderPath).mkdirs(); // Ensure directory exists
 
         String outputFile = folderPath + "/merge_sort_step_" + startRow + "_" + endRow + ".txt";
