@@ -1,8 +1,0 @@
-Best Case Time   : 0.00 ms
-loop: 1
-
-Worst Case Time  : 0.00 ms
-loop: 4
-
-Average Case Time: 0.00 ms
-Average loop: 3.2666666666666666 Average time: 3.066666666666667E-10 ms 

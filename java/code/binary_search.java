@@ -168,7 +168,12 @@ public class binary_search {
         // output.append(String.format("Average Comparisons per Search: %.6f\n",
         // averageComparisons));
 
-        writeToFile("java/output/binary_search/binary_search_" + inputListSize + ".txt", output.toString());
+        String baseDir = System.getProperty("user.dir"); // current working directory
+        String outputPath = baseDir + File.separator + "java" + File.separator + "output" +
+                File.separator + "binary_search" + File.separator +
+                "binary_search_" + inputListSize + ".txt";
+
+        writeToFile(outputPath, output.toString());
 
         return (int) totalComparisons;
     }

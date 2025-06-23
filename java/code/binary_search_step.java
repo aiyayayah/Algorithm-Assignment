@@ -1,5 +1,9 @@
 import java.io.*;
 import java.util.*;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import javax.swing.JFileChooser;
 
 public class binary_search_step {
 
@@ -42,7 +46,9 @@ public class binary_search_step {
             List<String> output = new ArrayList<>();
             int index = binarySearch(dataList, target, output);
 
-            String folderPath = "output/binary_search_step";
+            String baseDir = System.getProperty("user.dir");
+            String folderPath = baseDir + File.separator + "java" + File.separator + "output" + File.separator
+                    + "binary_search_step";
             File outputDir = new File(folderPath);
             if (!outputDir.exists()) {
                 outputDir.mkdirs();
@@ -65,9 +71,18 @@ public class binary_search_step {
     }
 
     private static String GetUserInput() {
-        Scanner scannerObject = new Scanner(System.in);
-        System.out.println("Enter the full file path to perform binary search step:");
-        return scannerObject.nextLine();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select a CSV dataset file for binary search step");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV files", "csv"));
+        int result = fileChooser.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            return fileChooser.getSelectedFile().getAbsolutePath();
+        } else {
+            System.out.println("No file selected. Exiting.");
+            System.exit(0);
+            return null; // unreachable, but required
+        }
     }
 
     private static boolean SearchFileName(String fullPath) {
