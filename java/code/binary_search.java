@@ -82,7 +82,7 @@ public class binary_search {
         long bestCaseEndTime = System.nanoTime();
 
         double bestCaseRunTime = (bestCaseEndTime - bestCaseStartTime) / 1_000_000.0 / TIMING_ITERATIONS;
-        output.append(String.format("Best Case Time   : %.6f ms\n", bestCaseRunTime));
+        // output.append(String.format("Best Case Time : %.6f ms\n", bestCaseRunTime));
         // output.append("Best Case Comparisons: " + bestCaseComparison + "\n\n");
 
         // ---------------------------- WORST CASE -----------------------------
@@ -121,15 +121,14 @@ public class binary_search {
             }
             worstCaseTargets.add(targetSmaller);
         }
-        /*
-         * -----------------------TO DEBUG EACH ELEMENTS-------------------------------
-         * for (int i = 0; i < inputListSize; i++) {
-         * long target = list.get(i).number;
-         * int comparisons = binarySearchSingle(list, target);
-         * output.append(String.format("i: %d  comp: %d\n", i, comparisons));
-         * 
-         * }
-         */
+
+        // * -----------------------TO DEBUG EACH
+        // ELEMENTS-------------------------------
+        // for (int i = 0; i < inputListSize; i++) {
+        // long target = list.get(i).number;
+        // int comparisons = binarySearchSingle(list, target);
+        // output.append(String.format("i: %d comp: %d\n", i, comparisons));
+        // }
 
         long worstCaseStartTime = System.nanoTime();
         for (int i = 0; i < TIMING_ITERATIONS; i++) {
@@ -138,7 +137,8 @@ public class binary_search {
         long worstCaseEndTime = System.nanoTime();
 
         double worstCaseRunTime = (worstCaseEndTime - worstCaseStartTime) / 1_000_000.0 / TIMING_ITERATIONS;
-        output.append(String.format("Worst Case Time  : %.6f ms\n", worstCaseRunTime));
+        // output.append(String.format("Worst Case Time : %.6f ms\n",
+        // worstCaseRunTime));
         // output.append("Worst Case Comparisons: " + maxComparisons + "\n");
         // output.append("Elements requiring max comparisons: " +
         // worstCaseTargets.size() + "\n\n");
@@ -162,11 +162,15 @@ public class binary_search {
         double averageTimeMs = totalTimeMs / inputListSize;
         double averageComparisons = (double) totalComparisons / inputListSize;
 
-        // output.append(String.format("Total Average Case Time: %.6f ms\n",
-        // totalTimeMs));
-        output.append(String.format("Average Case Time: %.6f ms\n", averageTimeMs));
+        // output.append(String.format("Total Average Case Time: %.6f
+        // ms\n",totalTimeMs));
+        // output.append(String.format("Average Case Time: %.6f ms\n", averageTimeMs));
         // output.append(String.format("Average Comparisons per Search: %.6f\n",
         // averageComparisons));
+
+        output.append(String.format("Best Case Time   : %.6f ms\n", bestCaseRunTime));
+        output.append(String.format("Average Case Time: %.6f ms\n", averageTimeMs));
+        output.append(String.format("Worst Case Time  : %.6f ms\n", worstCaseRunTime));
 
         String baseDir = System.getProperty("user.dir"); // current working directory
         String outputPath = baseDir + File.separator + "java" + File.separator + "output" +
