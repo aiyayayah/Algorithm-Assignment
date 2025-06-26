@@ -13,7 +13,6 @@ class Pair:
 
 
 def parse_file(filename: str) -> List[Pair]:
-    """Parse CSV file and return list of Pair objects."""
     data_list = []
     try:
         with open(filename, 'r', newline='', encoding='utf-8') as file:
@@ -31,7 +30,6 @@ def parse_file(filename: str) -> List[Pair]:
 
 
 def binary_search_single(data_list: List[Pair], target: int) -> int:
-    """Perform binary search and return number of comparisons."""
     left = 0
     right = len(data_list) - 1
     comparisons = 0
@@ -52,7 +50,6 @@ def binary_search_single(data_list: List[Pair], target: int) -> int:
 
 
 def binary_search_analysis(data_list: List[Pair]) -> int:
-    """Perform comprehensive binary search analysis."""
     output = []
     input_list_size = len(data_list)
     TIMING_ITERATIONS = 1000
@@ -75,7 +72,27 @@ def binary_search_analysis(data_list: List[Pair]) -> int:
     
     best_case_run_time = (best_case_end_time - best_case_start_time) * 1000 / TIMING_ITERATIONS
     output.append(f"Best Case Time   : {best_case_run_time:.6f} ms")
+
+    # ---------------------------- AVERAGE CASE -----------------------------
+    total_comparisons = 0
+    total_search_time = 0
     
+    for i in range(input_list_size):
+        target = data_list[i].number
+        
+        start_time = time.perf_counter()
+        comparisons = binary_search_single(data_list, target)
+        end_time = time.perf_counter()
+        
+        total_search_time += (end_time - start_time)
+        total_comparisons += comparisons
+    
+    total_time_ms = total_search_time * 1000
+    average_time_ms = total_time_ms / input_list_size
+    average_comparisons = total_comparisons / input_list_size
+    
+    output.append(f"Average Case Time: {average_time_ms:.6f} ms")
+
     # ---------------------------- WORST CASE -----------------------------
     worst_case_targets = []
     max_comparisons = 0
@@ -116,34 +133,14 @@ def binary_search_analysis(data_list: List[Pair]) -> int:
     worst_case_run_time = (worst_case_end_time - worst_case_start_time) * 1000 / TIMING_ITERATIONS
     output.append(f"Worst Case Time  : {worst_case_run_time:.6f} ms")
     
-    # ---------------------------- AVERAGE CASE -----------------------------
-    total_comparisons = 0
-    total_search_time = 0
-    
-    for i in range(input_list_size):
-        target = data_list[i].number
-        
-        start_time = time.perf_counter()
-        comparisons = binary_search_single(data_list, target)
-        end_time = time.perf_counter()
-        
-        total_search_time += (end_time - start_time)
-        total_comparisons += comparisons
-    
-    total_time_ms = total_search_time * 1000
-    average_time_ms = total_time_ms / input_list_size
-    average_comparisons = total_comparisons / input_list_size
-    
-    output.append(f"Average Case Time: {average_time_ms:.6f} ms")
     
     # Write results to file
     write_to_file(f"python/output/binary_search/binary_search_{input_list_size}.txt", "\n".join(output))
-    
+
     return total_comparisons
 
 
 def write_to_file(path: str, content: str):
-    """Write content to file, creating directories if needed."""
     try:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'w', encoding='utf-8') as file:
@@ -155,12 +152,9 @@ def write_to_file(path: str, content: str):
 
 
 def main():
-    """Main function to handle file selection and run analysis."""
-    # Create root window and hide it
     root = tk.Tk()
     root.withdraw()
     
-    # Use file dialog to select CSV file
     file_path = filedialog.askopenfilename(
         title="Select a CSV dataset file for binary search",
         filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
