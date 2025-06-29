@@ -4,7 +4,7 @@ import os
 steps = []
 
 def read_csv(filename):
-    data = []
+    data = [] 
     with open(filename, newline='') as file:
         reader = csv.reader(file)
         for row in reader:
