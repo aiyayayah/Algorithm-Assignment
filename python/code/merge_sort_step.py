@@ -1,0 +1,63 @@
+import csv
+import os
+
+steps = []
+
+def read_csv(filename):
+    data = []
+    with open(filename, newline='') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            integer = int(row[0])
+            alphabet = row[1]
+            data.append((integer, alphabet))
+    return data
+
+def log_step(data):
+    view = ", ".join(f"{x[0]}/{x[1]}" for x in data)
+    steps.append(f"[{view}]")
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    merged = merge(left, right)
+
+    log_step(merged)
+    return merged
+
+def merge(left, right):
+    result = []
+    i = j = 0
+
+    while i < len(left) and j < len(right):
+        if left[i][0] <= right[j][0]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    
+    result += left[i:]
+    result += right[j:]
+    return result
+
+if __name__ == "__main__":
+    file = input("Enter filename: ")
+    filepath = f"dataset/{file}"
+    start = int(input("Start row: "))
+    end = int(input("Ends row: "))
+
+    to_read = read_csv(filepath)
+    step = to_read[start : end]
+    log_step(step)
+    merge_sort(step)
+
+    output_dir = "python/output/merge_sort_step"
+    os.makedirs(output_dir, exist_ok=True)
+    step_filename = os.path.join(output_dir, f"merge_sort_step_{start}_{end}.txt")
+    with open(step_filename, "w") as file:
+        file.write("\n".join(steps))
+    print(f"Sorting steps written to {step_filename}")
