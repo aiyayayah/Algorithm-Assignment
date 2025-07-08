@@ -1,4 +1,4 @@
-## 🧠 Overview
+##  Overview
 
 This project is developed for the course **CCP6214 Algorithm Design and Analysis**.  
 It aims to analyze and compare the performance of two sorting algorithms—**Merge Sort** and **Quick Sort** (last element as pivot)—and evaluate **Binary Search** under **best**, **average**, and **worst** case scenarios.
@@ -7,9 +7,9 @@ All implementations are done in **both Java and Python**, strictly following the
 
 ---
 
-## 🔧 Implemented Algorithms
+##  Implemented Algorithms
 
-### 📦 Dataset Generator
+###  Dataset Generator
 - **File**: `dataset_generator.java`
 - **Description**: Generates a CSV file containing random, unique `(integer, string)` pairs
 - **Supports**: Dataset sizes up to **1 billion elements**
@@ -17,7 +17,7 @@ All implementations are done in **both Java and Python**, strictly following the
 
 ---
 
-### 📚 Sorting Algorithms
+### Sorting Algorithms
 
 | Algorithm           | File               | Input                                  | Output Description                         |
 |---------------------|--------------------|----------------------------------------|--------------------------------------------|
@@ -28,7 +28,7 @@ All implementations are done in **both Java and Python**, strictly following the
 
 ---
 
-### 🔍 Searching Algorithms
+###  Searching Algorithms
 
 | Algorithm              | File                 | Input                          | Output Description                              |
 |------------------------|----------------------|--------------------------------|-------------------------------------------------|
